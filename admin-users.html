@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Users - ICE FISHING Admin</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #080c18;
+            font-family: 'Inter', sans-serif;
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        .bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background:
+                radial-gradient(ellipse at 50% 30%, rgba(0, 120, 255, 0.06) 0%, transparent 55%),
+                radial-gradient(ellipse at 50% 80%, rgba(255, 215, 0, 0.03) 0%, transparent 45%),
+                #080c18;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+        }
+
+        .header .back-btn {
+            padding: 8px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.7rem;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+
+        .header .back-btn:hover {
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .header h1 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            flex: 1;
+            text-align: center;
+        }
+
+        .header h1 span {
+            color: #4dc9f6;
+        }
+
+        .header .placeholder {
+            width: 80px;
+        }
+
+        /* Stats Row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 1.6rem;
+            font-weight: 800;
+        }
+
+        .stat-card .number.blue { color: #4dc9f6; }
+        .stat-card .number.green { color: #00ff88; }
+        .stat-card .number.orange { color: #ffa500; }
+        .stat-card .number.red { color: #ff6b6b; }
+
+        .stat-card .label {
+            font-size: 0.55rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.15);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+
+        /* Search */
+        .search-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .search-row input {
+            flex: 1;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 10px;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            outline: none;
+            transition: 0.3s;
+            min-width: 200px;
+        }
+
+        .search-row input::placeholder {
+            color: rgba(255, 255, 255, 0.08);
+        }
+
+        .search-row input:focus {
+            border-color: rgba(77, 201, 246, 0.15);
+        }
+
+        /* Table */
+        .table-section {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 20px 22px;
+        }
+
+        .table-section .title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .table-section .title-row .title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.15);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .table-section .title-row .count {
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.1);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.7rem;
+        }
+
+        thead {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        th {
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.02);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        td .user-name {
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        td .wallet {
+            color: #ffd700;
+            font-weight: 600;
+        }
+
+        td .platform {
+            color: #4dc9f6;
+            font-size: 0.6rem;
+        }
+
+        td .key-text {
+            font-family: monospace;
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 0.55rem;
+            letter-spacing: 0.5px;
+        }
+
+        td .package-status {
+            font-size: 0.5rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 8px;
+        }
+
+        td .package-status.active {
+            background: rgba(0, 255, 136, 0.06);
+            color: #00ff88;
+        }
+
+        td .package-status.expired {
+            background: rgba(255, 50, 50, 0.06);
+            color: #ff6b6b;
+        }
+
+        td .package-status.pending {
+            background: rgba(255, 165, 0, 0.06);
+            color: #ffa500;
+        }
+
+        td .package-status.none {
+            background: rgba(255, 255, 255, 0.02);
+            color: rgba(255, 255, 255, 0.1);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 0.45rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .status-badge.active {
+            background: rgba(0, 255, 136, 0.06);
+            color: #00ff88;
+        }
+
+        .status-badge.blocked {
+            background: rgba(255, 50, 50, 0.06);
+            color: #ff6b6b;
+        }
+
+        .status-badge.pending {
+            background: rgba(255, 165, 0, 0.06);
+            color: #ffa500;
+        }
+
+        .action-btn {
+            padding: 4px 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .action-btn.view-btn {
+            background: rgba(77, 201, 246, 0.06);
+            color: #4dc9f6;
+        }
+
+        .action-btn.view-btn:hover {
+            background: rgba(77, 201, 246, 0.12);
+        }
+
+        .action-btn.block-btn {
+            background: rgba(255, 50, 50, 0.06);
+            color: #ff6b6b;
+        }
+
+        .action-btn.block-btn:hover {
+            background: rgba(255, 50, 50, 0.12);
+        }
+
+        .action-btn.unblock-btn {
+            background: rgba(0, 255, 136, 0.06);
+            color: #00ff88;
+        }
+
+        .action-btn.unblock-btn:hover {
+            background: rgba(0, 255, 136, 0.12);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px 20px;
+            color: rgba(255, 255, 255, 0.04);
+        }
+
+        .empty-state i {
+            font-size: 2rem;
+            opacity: 0.2;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: #0e1525;
+            border: 1px solid #1a2540;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 560px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .modal .modal-header h2 {
+            font-size: 1.1rem;
+        }
+
+        .modal .modal-header .close-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .modal .modal-header .close-btn:hover {
+            color: #ffffff;
+        }
+
+        .modal .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            align-items: center;
+        }
+
+        .modal .detail-row .label {
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .modal .detail-row .value {
+            color: #ffffff;
+            font-weight: 500;
+            font-size: 0.8rem;
+        }
+
+        .modal .detail-row .value.gold {
+            color: #ffd700;
+        }
+
+        .modal .detail-row .value.cyan {
+            color: #4dc9f6;
+        }
+
+        .modal .detail-row .value.green {
+            color: #00ff88;
+        }
+
+        /* Package Status Change */
+        .package-status-section {
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .package-status-section .status-label {
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.15);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .package-status-section .status-select-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .package-status-section .status-select-group select {
+            flex: 1;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 8px;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            outline: none;
+            min-width: 140px;
+        }
+
+        .package-status-section .status-select-group select option {
+            background: #080c18;
+            color: #ffffff;
+        }
+
+        .package-status-section .status-select-group select:focus {
+            border-color: rgba(77, 201, 246, 0.15);
+        }
+
+        .package-status-section .status-select-group .btn-save-status {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #4dc9f6, #2b8fc4);
+            color: #080c18;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .package-status-section .status-select-group .btn-save-status:hover {
+            transform: translateY(-2px);
+        }
+
+        .package-status-section .current-status {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.1);
+            margin-top: 6px;
+        }
+
+        /* Deposit Limit */
+        .deposit-limit-section {
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .deposit-limit-section .limit-label {
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.15);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .deposit-limit-section .limit-input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .deposit-limit-section .limit-input-group input {
+            flex: 1;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 8px;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            outline: none;
+            min-width: 120px;
+        }
+
+        .deposit-limit-section .limit-input-group input:focus {
+            border-color: rgba(77, 201, 246, 0.15);
+        }
+
+        .deposit-limit-section .limit-input-group .btn-save-limit {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #ffd700, #f0a500);
+            color: #080c18;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .deposit-limit-section .limit-input-group .btn-save-limit:hover {
+            transform: translateY(-2px);
+        }
+
+        .deposit-limit-section .current-limit {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.1);
+            margin-top: 6px;
+        }
+
+        .modal .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .modal .modal-actions .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .modal .modal-actions .btn-block {
+            background: linear-gradient(135deg, #ff6b6b, #cc4444);
+            color: #ffffff;
+        }
+
+        .modal .modal-actions .btn-block:hover {
+            transform: translateY(-2px);
+        }
+
+        .modal .modal-actions .btn-unblock {
+            background: linear-gradient(135deg, #00ff88, #00cc6a);
+            color: #080c18;
+        }
+
+        .modal .modal-actions .btn-unblock:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 360px;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transform: translateX(120%);
+            opacity: 0;
+            transition: 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+
+        #toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        #toast.success {
+            background: rgba(0, 255, 136, 0.08);
+            border-color: rgba(0, 255, 136, 0.05);
+            color: #00ff88;
+        }
+
+        #toast.error {
+            background: rgba(255, 50, 50, 0.08);
+            border-color: rgba(255, 50, 50, 0.05);
+            color: #ff6b6b;
+        }
+
+        #toast.warning {
+            background: rgba(255, 165, 0, 0.08);
+            border-color: rgba(255, 165, 0, 0.05);
+            color: #ffa500;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .header {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .header .placeholder {
+                display: none;
+            }
+            table {
+                font-size: 0.6rem;
+            }
+            th, td {
+                padding: 6px 6px;
+            }
+            .search-row {
+                flex-direction: column;
+            }
+            .search-row input {
+                min-width: unset;
+            }
+            .modal {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 12px; }
+            .stats-row {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            .stat-card .number {
+                font-size: 1.2rem;
+            }
+            .header h1 {
+                font-size: 1rem;
+            }
+            .table-section {
+                padding: 14px 12px;
+            }
+            .modal {
+                padding: 16px;
+            }
+            .modal .detail-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+            .modal .deposit-limit-section .limit-input-group,
+            .modal .package-status-section .status-select-group {
+                flex-direction: column;
+            }
+            .modal .deposit-limit-section .limit-input-group input,
+            .modal .package-status-section .status-select-group select {
+                width: 100%;
+            }
+            .modal .deposit-limit-section .limit-input-group .btn-save-limit,
+            .modal .package-status-section .status-select-group .btn-save-status {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg"></div>
+
+    <div id="toast">
+        <span id="toastMessage">Toast message</span>
+    </div>
+
+    <div class="container">
+
+        <!-- Header -->
+        <div class="header">
+            <a href="admin-panel.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
+            <h1>👥 <span>Users</span></h1>
+            <div class="placeholder"></div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row" id="statsRow">
+            <div class="stat-card">
+                <div class="number blue" id="totalUsers">0</div>
+                <div class="label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="number green" id="activeUsers">0</div>
+                <div class="label">Active</div>
+            </div>
+            <div class="stat-card">
+                <div class="number orange" id="blockedUsers">0</div>
+                <div class="label">Blocked</div>
+            </div>
+            <div class="stat-card">
+                <div class="number red" id="pendingUsers">0</div>
+                <div class="label">Pending</div>
+            </div>
+        </div>
+
+        <!-- Search -->
+        <div class="search-row">
+            <input type="text" id="searchInput" placeholder="🔍 Search by name, email, license key..." oninput="renderTable()" />
+        </div>
+
+        <!-- Table -->
+        <div class="table-section">
+            <div class="title-row">
+                <span class="title"><i class="fas fa-list"></i> All Users</span>
+                <span class="count" id="userCount">Total: 0</span>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>User</th>
+                            <th>License Key</th>
+                            <th>Platform</th>
+                            <th>Wallet</th>
+                            <th>Package</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody">
+                        <tr>
+                            <td colspan="8">
+                                <div class="empty-state">
+                                    <i class="fas fa-users"></i>
+                                    No users found
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>👤 User Details</h2>
+                <button class="close-btn" onclick="closeModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="modalBody">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js">
+    </script>
+
+    <script>
+        // ============================================================
+        // FIREBASE
+        // ============================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDFZpetqOy3nHj27rUo7js6Bny79sxnYvU",
+            authDomain: "ice-fishing-c20bc.firebaseapp.com",
+            projectId: "ice-fishing-c20bc",
+            storageBucket: "ice-fishing-c20bc.firebasestorage.app",
+            messagingSenderId: "220872632937",
+            appId: "1:220872632937:android:71997f3fd7dba6293a90f8"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        let allUsers = [];
+        let userConnections = {};
+        let userPackages = {};
+
+        // ============================================================
+        // CHECK ADMIN AUTH
+        // ============================================================
+        function checkAdminAuth() {
+            const adminKey = sessionStorage.getItem('adminKey');
+            const adminToken = sessionStorage.getItem('adminToken');
+
+            if (!adminKey || !adminToken) {
+                window.location.href = 'admin-login.html';
+                return false;
+            }
+            return true;
+        }
+
+        // ============================================================
+        // TOAST
+        // ============================================================
+        let toastTimer = null;
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+
+            if (toastTimer) clearTimeout(toastTimer);
+
+            toastMessage.textContent = message;
+            toast.className = type;
+            toast.classList.add('show');
+
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3500);
+        }
+
+        // ============================================================
+        // LOAD USERS
+        // ============================================================
+        function loadUsers() {
+            db.collection('users')
+                .orderBy('createdAt', 'desc')
+                .get()
+                .then((snapshot) => {
+                    allUsers = [];
+                    snapshot.forEach((doc) => {
+                        allUsers.push({ id: doc.id, ...doc.data() });
+                    });
+                    loadConnections();
+                    loadPackages();
+                })
+                .catch((error) => {
+                    console.error('Error loading users:', error);
+                });
+        }
+
+        // ============================================================
+        // LOAD CONNECTIONS
+        // ============================================================
+        function loadConnections() {
+            db.collection('userConnections')
+                .orderBy('createdAt', 'desc')
+                .get()
+                .then((snapshot) => {
+                    userConnections = {};
+                    snapshot.forEach((doc) => {
+                        const data = doc.data();
+                        if (!userConnections[data.userId] || data.status === 'active') {
+                            userConnections[data.userId] = data;
+                        }
+                    });
+                    updateStats();
+                    renderTable();
+                })
+                .catch((error) => {
+                    console.error('Error loading connections:', error);
+                    updateStats();
+                    renderTable();
+                });
+        }
+
+        // ============================================================
+        // LOAD PACKAGES
+        // ============================================================
+        function loadPackages() {
+            db.collection('userPackages')
+                .orderBy('createdAt', 'desc')
+                .get()
+                .then((snapshot) => {
+                    userPackages = {};
+                    snapshot.forEach((doc) => {
+                        const data = doc.data();
+                        if (!userPackages[data.userId]) {
+                            userPackages[data.userId] = data;
+                        }
+                    });
+                    updateStats();
+                    renderTable();
+                })
+                .catch((error) => {
+                    console.error('Error loading packages:', error);
+                });
+        }
+
+        // ============================================================
+        // UPDATE STATS
+        // ============================================================
+        function updateStats() {
+            const total = allUsers.length;
+            const active = allUsers.filter(u => !u.isBlocked).length;
+            const blocked = allUsers.filter(u => u.isBlocked).length;
+            const pending = allUsers.filter(u => u.isBlocked === undefined).length;
+
+            document.getElementById('totalUsers').textContent = total;
+            document.getElementById('activeUsers').textContent = active;
+            document.getElementById('blockedUsers').textContent = blocked;
+            document.getElementById('pendingUsers').textContent = pending;
+            document.getElementById('userCount').textContent = 'Total: ' + total;
+        }
+
+        // ============================================================
+        // RENDER TABLE
+        // ============================================================
+        function renderTable() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const tbody = document.getElementById('userTableBody');
+
+            let filtered = allUsers;
+
+            if (search) {
+                filtered = filtered.filter(u =>
+                    (u.name || '').toLowerCase().includes(search) ||
+                    (u.email || '').toLowerCase().includes(search) ||
+                    (u.userKey || '').toLowerCase().includes(search)
+                );
+            }
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-state">
+                                <i class="fas fa-users"></i>
+                                No users found
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            let html = '';
+            let index = 1;
+
+            filtered.forEach((user) => {
+                const status = user.isBlocked ? 'blocked' : 'active';
+                const statusLabel = user.isBlocked ? '🔒 Blocked' : '✅ Active';
+                const connection = userConnections[user.id];
+                const platformName = connection ? connection.platformName || '—' : '—';
+                const platformUsername = connection ? connection.username || '' : '';
+                const platformDisplay = platformName + (platformUsername ? ' (' + platformUsername + ')' : '');
+                const wallet = user.walletBalance || 0;
+
+                const userPkg = userPackages[user.id];
+                const pkgStatus = userPkg ? userPkg.status : 'none';
+                const pkgName = userPkg ? userPkg.packageName : '—';
+                const pkgDisplay = pkgName + (pkgStatus !== 'none' ? ` <span class="package-status ${pkgStatus}">${pkgStatus}</span>` : '');
+
+                html += `
+                    <tr>
+                        <td>${index++}</td>
+                        <td>
+                            <span class="user-name">${user.name || 'Unknown'}</span>
+                            <br />
+                            <span style="font-size:0.5rem; color:rgba(255,255,255,0.1);">${user.email || ''}</span>
+                        </td>
+                        <td><span class="key-text">${user.userKey || '—'}</span></td>
+                        <td><span class="platform">${platformDisplay}</span></td>
+                        <td><span class="wallet">$${wallet.toFixed(2)}</span></td>
+                        <td style="font-size:0.6rem;">${pkgDisplay}</td>
+                        <td><span class="status-badge ${status}">${statusLabel}</span></td>
+                        <td>
+                            <button class="action-btn view-btn" onclick="viewUser('${user.id}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            ${user.isBlocked ? 
+                                `<button class="action-btn unblock-btn" onclick="toggleUser('${user.id}', false)">
+                                    <i class="fas fa-unlock"></i>
+                                </button>` :
+                                `<button class="action-btn block-btn" onclick="toggleUser('${user.id}', true)">
+                                    <i class="fas fa-lock"></i>
+                                </button>`
+                            }
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        // ============================================================
+        // VIEW USER
+        // ============================================================
+        function viewUser(userId) {
+            const user = allUsers.find(u => u.id === userId);
+            if (!user) return;
+
+            const modal = document.getElementById('modalOverlay');
+            const body = document.getElementById('modalBody');
+
+            const connection = userConnections[userId];
+            const userPkg = userPackages[userId];
+            const date = user.createdAt?.toDate?.() || new Date(user.createdAt);
+            const dateStr = date.toLocaleDateString('en-US', {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            const statusColor = user.isBlocked ? '#ff6b6b' : '#00ff88';
+            const statusText = user.isBlocked ? '🔒 Blocked' : '✅ Active';
+
+            const platformInfo = connection ? `
+                <div class="detail-row">
+                    <span class="label">Platform</span>
+                    <span class="value cyan">${connection.platformName || '—'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Username / ID</span>
+                    <span class="value">${connection.username || '—'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Site Name</span>
+                    <span class="value">${connection.siteName || '—'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Status</span>
+                    <span class="value" style="color:${connection.status === 'active' ? '#00ff88' : '#ffa500'};">${connection.status || '—'}</span>
+                </div>
+            ` : `
+                <div class="detail-row">
+                    <span class="label">Platform</span>
+                    <span class="value" style="color:rgba(255,255,255,0.1);">No platform connected</span>
+                </div>
+            `;
+
+            const depositLimit = user.depositLimit || 0;
+            const pkgStatus = userPkg ? userPkg.status : 'none';
+
+            body.innerHTML = `
+                <div class="detail-row">
+                    <span class="label">Name</span>
+                    <span class="value">${user.name || 'Unknown'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Email</span>
+                    <span class="value">${user.email || '—'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">License Key</span>
+                    <span class="value" style="color:#ffd700; font-family:monospace;">${user.userKey || '—'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Wallet Balance</span>
+                    <span class="value gold">$${(user.walletBalance || 0).toFixed(2)}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Total Fish</span>
+                    <span class="value">${user.totalFish || 0}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Total Score</span>
+                    <span class="value">${user.totalScore || 0}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Package</span>
+                    <span class="value cyan">${userPkg ? userPkg.packageName : '—'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Package Status</span>
+                    <span class="value" style="color:${pkgStatus === 'active' ? '#00ff88' : pkgStatus === 'expired' ? '#ff6b6b' : '#ffa500'}; text-transform:capitalize;">
+                        ${pkgStatus || 'None'}
+                    </span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">User Status</span>
+                    <span class="value" style="color:${statusColor};">${statusText}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Joined</span>
+                    <span class="value" style="font-size:0.65rem; color:rgba(255,255,255,0.1);">${dateStr}</span>
+                </div>
+
+                <div style="margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.04);">
+                    <div style="font-size:0.65rem; color:rgba(255,255,255,0.15); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">
+                        <i class="fas fa-link"></i> Connected Profile
+                    </div>
+                    ${platformInfo}
+                </div>
+
+                <!-- Package Status Change -->
+                <div class="package-status-section">
+                    <div class="status-label"><i class="fas fa-box"></i> Package Status</div>
+                    <div class="status-select-group">
+                        <select id="packageStatusSelect">
+                            <option value="active" ${pkgStatus === 'active' ? 'selected' : ''}>🟢 Active</option>
+                            <option value="expired" ${pkgStatus === 'expired' ? 'selected' : ''}>🔴 Expired</option>
+                            <option value="pending" ${pkgStatus === 'pending' ? 'selected' : ''}>🟡 Pending</option>
+                            <option value="none" ${pkgStatus === 'none' || !pkgStatus ? 'selected' : ''}>⚪ None</option>
+                        </select>
+                        <button class="btn-save-status" onclick="savePackageStatus('${user.id}')">
+                            <i class="fas fa-save"></i> Update
+                        </button>
+                    </div>
+                    <div class="current-status">Current: ${pkgStatus || 'None'}</div>
+                </div>
+
+                <!-- Deposit Limit -->
+                <div class="deposit-limit-section">
+                    <div class="limit-label"><i class="fas fa-credit-card"></i> Deposit Limit</div>
+                    <div class="limit-input-group">
+                        <input type="number" id="depositLimitInput" placeholder="Enter limit amount" value="${depositLimit}" min="0" step="1" />
+                        <button class="btn-save-limit" onclick="saveDepositLimit('${user.id}')">
+                            <i class="fas fa-save"></i> Save
+                        </button>
+                    </div>
+                    <div class="current-limit">Current limit: $${depositLimit.toFixed(2)}</div>
+                </div>
+
+                <div class="modal-actions">
+                    ${user.isBlocked ? 
+                        `<button class="btn btn-unblock" onclick="toggleUser('${user.id}', false); closeModal();">
+                            <i class="fas fa-unlock"></i> Unblock User
+                        </button>` :
+                        `<button class="btn btn-block" onclick="toggleUser('${user.id}', true); closeModal();">
+                            <i class="fas fa-lock"></i> Block User
+                        </button>`
+                    }
+                </div>
+            `;
+
+            modal.classList.add('show');
+        }
+
+        // ============================================================
+        // SAVE PACKAGE STATUS
+        // ============================================================
+        async function savePackageStatus(userId) {
+            const select = document.getElementById('packageStatusSelect');
+            const newStatus = select.value;
+
+            try {
+                // Find the user's package document
+                const querySnapshot = await db.collection('userPackages')
+                    .where('userId', '==', userId)
+                    .orderBy('createdAt', 'desc')
+                    .limit(1)
+                    .get();
+
+                if (querySnapshot.empty) {
+                    showToast('❌ No package found for this user.', 'error');
+                    return;
+                }
+
+                const doc = querySnapshot.docs[0];
+                const docId = doc.id;
+
+                // Update the package status
+                await db.collection('userPackages').doc(docId).update({
+                    status: newStatus,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // Also update user's package status in users collection
+                await db.collection('users').doc(userId).update({
+                    packageStatus: newStatus,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // If status is 'active', set signal active
+                if (newStatus === 'active') {
+                    await db.collection('users').doc(userId).update({
+                        signalActive: true
+                    });
+                } else if (newStatus === 'expired') {
+                    await db.collection('users').doc(userId).update({
+                        signalActive: false
+                    });
+                }
+
+                showToast('✅ Package status updated to: ' + newStatus, 'success');
+
+                // Update local data
+                if (userPackages[userId]) {
+                    userPackages[userId].status = newStatus;
+                }
+
+                // Update current status display
+                document.querySelector('.current-status').textContent = 'Current: ' + newStatus;
+                renderTable();
+                loadPackages();
+
+            } catch (error) {
+                console.error('Error saving package status:', error);
+                showToast('❌ Failed to update: ' + error.message, 'error');
+            }
+        }
+
+        // ============================================================
+        // SAVE DEPOSIT LIMIT
+        // ============================================================
+        async function saveDepositLimit(userId) {
+            const input = document.getElementById('depositLimitInput');
+            const amount = parseFloat(input.value);
+
+            if (isNaN(amount) || amount < 0) {
+                showToast('❌ Please enter a valid amount.', 'error');
+                return;
+            }
+
+            try {
+                await db.collection('users').doc(userId).update({
+                    depositLimit: amount,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                showToast('✅ Deposit limit updated to $' + amount.toFixed(2), 'success');
+                
+                const user = allUsers.find(u => u.id === userId);
+                if (user) {
+                    user.depositLimit = amount;
+                }
+                
+                document.querySelector('.current-limit').textContent = 'Current limit: $' + amount.toFixed(2);
+                renderTable();
+            } catch (error) {
+                console.error('Error saving deposit limit:', error);
+                showToast('❌ Failed to save: ' + error.message, 'error');
+            }
+        }
+
+        // ============================================================
+        // TOGGLE USER BLOCK
+        // ============================================================
+        async function toggleUser(userId, block) {
+            const action = block ? 'block' : 'unblock';
+            if (!confirm(`Are you sure you want to ${action} this user?`)) return;
+
+            try {
+                await db.collection('users').doc(userId).update({
+                    isBlocked: block,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                showToast(block ? '🔒 User blocked' : '🔓 User unblocked', 'success');
+                loadUsers();
+            } catch (error) {
+                console.error('Error toggling user:', error);
+                showToast('❌ Failed to ' + action + ' user: ' + error.message, 'error');
+            }
+        }
+
+        // ============================================================
+        // CLOSE MODAL
+        // ============================================================
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('show');
+        }
+
+        // ============================================================
+        // CLOSE MODAL ON OVERLAY CLICK
+        // ============================================================
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        if (checkAdminAuth()) {
+            loadUsers();
+            setInterval(loadUsers, 30000);
+        }
+    </script>
+
+</body>
+</html>
