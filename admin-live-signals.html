@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Signal Control - ICE FISHING Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#080c18;color:#fff;font-family:Inter,sans-serif;padding:18px}
+.bg{position:fixed;inset:0;background:radial-gradient(circle at 50% 10%,rgba(77,201,246,.08),transparent 45%),#080c18;z-index:-1}
+.container{max-width:620px;margin:auto}
+.header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}
+.back{color:#94a3b8;text-decoration:none;padding:10px 14px;border:1px solid rgba(255,255,255,.06);border-radius:12px;background:rgba(255,255,255,.025)}
+h1{font-size:1.15rem} h1 span{color:#4dc9f6}
+.card{background:rgba(17,24,39,.82);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:20px;margin-bottom:14px;box-shadow:0 18px 55px rgba(0,0,0,.18)}
+.title{font-size:.72rem;color:#94a3b8;text-transform:uppercase;letter-spacing:1.4px;font-weight:700;margin-bottom:12px}
+.mode-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.mode{border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:14px 8px;background:rgba(255,255,255,.025);cursor:pointer;text-align:center;color:#cbd5e1}
+.mode input{display:none}.mode strong{display:block;font-size:.78rem;margin-top:6px}.mode small{display:block;font-size:.57rem;color:#64748b;margin-top:5px;line-height:1.35}
+.mode.selected{border-color:rgba(77,201,246,.45);background:rgba(77,201,246,.08);box-shadow:0 0 25px rgba(77,201,246,.06)}
+.signal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.signal{border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:12px;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.02);cursor:pointer}
+.signal input{accent-color:#4dc9f6}.signal img{width:52px;height:34px;object-fit:contain;border-radius:8px}.signal .name{font-size:.75rem;font-weight:700}.signal .sub{font-size:.58rem;color:#64748b;margin-top:3px}
+.sequence-row{display:flex;align-items:center;gap:9px;padding:9px;border:1px solid rgba(255,255,255,.06);border-radius:12px;background:rgba(255,255,255,.02);margin-top:8px}
+.sequence-row img{width:48px;height:32px;object-fit:contain}.sequence-row .seq-name{flex:1;font-size:.72rem;font-weight:700}.remove{border:0;background:rgba(248,113,113,.1);color:#f87171;width:32px;height:32px;border-radius:9px;cursor:pointer}
+.add-row{display:flex;gap:8px;margin-top:10px}.add-row select,.interval{flex:1;background:#0d1420;color:#fff;border:1px solid rgba(255,255,255,.08);border-radius:11px;padding:11px}
+.btn{width:100%;border:0;border-radius:13px;padding:14px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#4dc9f6,#2b8fc4);color:#07111c;margin-top:12px}
+.note{font-size:.62rem;color:#64748b;line-height:1.5}.status{font-size:.7rem;padding:11px 13px;border-radius:11px;margin-top:10px;background:rgba(52,211,153,.07);color:#34d399;display:none}
+.status.show{display:block}
+@media(max-width:480px){body{padding:12px}.mode-grid{grid-template-columns:1fr}.signal-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="container">
+  <div class="header">
+    <a class="back" href="admin-panel.html">← Back</a>
+    <h1>🎣 <span>Live Signal Control</span></h1>
+  </div>
+
+  <div class="card">
+    <div class="title">Control Mode</div>
+    <div class="mode-grid">
+      <label class="mode selected" data-mode="random">
+        <input type="radio" name="mode" value="random" checked>
+        🎲<strong>Random</strong><small>Auto-pick a signal</small>
+      </label>
+      <label class="mode" data-mode="single">
+        <input type="radio" name="mode" value="single">
+        🎯<strong>Single</strong><small>One selected signal</small>
+      </label>
+      <label class="mode" data-mode="sequence">
+        <input type="radio" name="mode" value="sequence">
+        📋<strong>Manual Queue</strong><small>Play in saved order</small>
+      </label>
+    </div>
+  </div>
+
+  <div class="card" id="singleCard" style="display:none">
+    <div class="title">Select One Signal</div>
+    <div class="signal-grid" id="singleGrid"></div>
+  </div>
+
+  <div class="card" id="sequenceCard" style="display:none">
+    <div class="title">Unlimited Signal Queue</div>
+    <div class="note">Add signals as many times as you want. They will appear one-by-one in exactly this order.</div>
+    <div id="sequenceList"></div>
+    <div class="add-row">
+      <select id="addSignal"></select>
+      <button class="btn" style="width:auto;margin:0;padding:11px 15px" onclick="addToSequence()">＋ Add</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="title">Signal Speed</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input id="interval" class="interval" type="number" min="3" max="60" step="1" value="7">
+      <span style="font-size:.68rem;color:#94a3b8">seconds</span>
+    </div>
+    <div class="note" style="margin-top:8px">Used by Random and Manual Queue. Minimum 3 seconds keeps the animation smooth.</div>
+  </div>
+
+  <div class="card">
+    <button class="btn" onclick="saveControl()">💾 Save & Publish Live Signal</button>
+    <div id="status" class="status"></div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig={
+ apiKey:"AIzaSyDFZpetqOy3nHj27rUo7js6Bny79sxnYvU",
+ authDomain:"ice-fishing-c20bc.firebaseapp.com",
+ projectId:"ice-fishing-c20bc",
+ storageBucket:"ice-fishing-c20bc.firebasestorage.app",
+ messagingSenderId:"220872632937",
+ appId:"1:220872632937:android:71997f3fd7dba6293a90f8"
+};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.firestore();
+
+const SIGNALS={
+ red:{name:"Huge Reds",image:"https://res.cloudinary.com/dw72p48ir/image/upload/v1788040428/fish-red_g9jmt4.png"},
+ yellow:{name:"Big Orange",image:"https://res.cloudinary.com/dw72p48ir/image/upload/v1788040428/fish-yellow_zkxguo.png"},
+ blue:{name:"Lil Blues",image:"https://res.cloudinary.com/dw72p48ir/image/upload/v1788040428/fish-blue_niavh5.png"},
+ darkleaf:{name:"Dark Leaf",image:"https://res.cloudinary.com/dw72p48ir/image/upload/v1788040427/Compressed_DARK_LEAF_2_2_intxk4.png"},
+ whiteleaf:{name:"White Leaf",image:"https://res.cloudinary.com/dw72p48ir/image/upload/v1788040428/Compressed_white_leaf_wif8c8.png"}
+};
+
+let mode="random", selected="blue", sequence=[];
+
+function checkAdmin(){
+ const k=sessionStorage.getItem("adminKey"), t=sessionStorage.getItem("adminToken");
+ if(!k||!t){location.href="admin-login.html";return false}
+ return true;
+}
+function renderSingle(){
+ const box=document.getElementById("singleGrid");
+ box.innerHTML=Object.entries(SIGNALS).map(([key,s])=>`
+   <label class="signal">
+     <input type="radio" name="singleSignal" value="${key}" ${selected===key?"checked":""} onchange="selected=this.value">
+     <img src="${s.image}" alt="">
+     <div><div class="name">${s.name}</div><div class="sub">${key}</div></div>
+   </label>`).join("");
+}
+function renderAddOptions(){
+ document.getElementById("addSignal").innerHTML=Object.entries(SIGNALS).map(([k,s])=>`<option value="${k}">${s.name}</option>`).join("");
+}
+function renderSequence(){
+ const box=document.getElementById("sequenceList");
+ box.innerHTML=sequence.length?sequence.map((key,i)=>`
+   <div class="sequence-row">
+     <img src="${SIGNALS[key].image}" alt="">
+     <div class="seq-name">${i+1}. ${SIGNALS[key].name}</div>
+     <button class="remove" onclick="removeFromSequence(${i})">✕</button>
+   </div>`).join(""):`<div class="note" style="margin-top:12px">Queue is empty. Add signals below.</div>`;
+}
+function addToSequence(){sequence.push(document.getElementById("addSignal").value);renderSequence()}
+function removeFromSequence(i){sequence.splice(i,1);renderSequence()}
+function setMode(m){
+ mode=m;
+ document.querySelectorAll(".mode").forEach(el=>el.classList.toggle("selected",el.dataset.mode===m));
+ document.getElementById("singleCard").style.display=m==="single"?"block":"none";
+ document.getElementById("sequenceCard").style.display=m==="sequence"?"block":"none";
+}
+document.querySelectorAll(".mode").forEach(el=>el.addEventListener("click",()=>setMode(el.dataset.mode)));
+
+async function loadControl(){
+ if(!checkAdmin())return;
+ const snap=await db.collection("settings").doc("liveSignalControl").get();
+ if(snap.exists){
+   const d=snap.data()||{};
+   mode=["random","single","sequence"].includes(d.mode)?d.mode:"random";
+   selected=SIGNALS[d.selectedSignal]?d.selectedSignal:"blue";
+   sequence=Array.isArray(d.sequence)?d.sequence.filter(k=>SIGNALS[k]):[];
+   document.getElementById("interval").value=Math.max(3,Math.min(60,Number(d.intervalMs||7000)/1000));
+ }
+ setMode(mode);renderSingle();renderAddOptions();renderSequence();
+}
+async function saveControl(){
+ if(!checkAdmin())return;
+ const seconds=Math.max(3,Math.min(60,Number(document.getElementById("interval").value)||7));
+ if(mode==="sequence"&&!sequence.length){alert("Add at least one signal to the manual queue.");return}
+ try{
+   await db.collection("settings").doc("liveSignalControl").set({
+     enabled:true,mode,selectedSignal:selected,sequence,intervalMs:seconds*1000,
+     version:Date.now(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+   },{merge:true});
+   const el=document.getElementById("status");
+   el.textContent="✅ Published. User live-game pages update instantly without refresh.";
+   el.classList.add("show");
+ }catch(e){alert("Save failed: "+e.message)}
+}
+loadControl();
+</script>
+</body>
+</html>
