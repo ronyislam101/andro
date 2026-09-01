@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Users - ICE FISHING Admin</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #080c18;
+            font-family: 'Inter', sans-serif;
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        .bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background:
+                radial-gradient(ellipse at 50% 30%, rgba(0, 120, 255, 0.06) 0%, transparent 55%),
+                radial-gradient(ellipse at 50% 80%, rgba(255, 215, 0, 0.03) 0%, transparent 45%),
+                #080c18;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+        }
+
+        .header .back-btn {
+            padding: 8px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.7rem;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+
+        .header .back-btn:hover {
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .header h1 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            flex: 1;
+            text-align: center;
+        }
+
+        .header h1 span {
+            color: #4dc9f6;
+        }
+
+        .header .placeholder {
+            width: 80px;
+        }
+
+        /* Stats Row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 1.6rem;
+            font-weight: 800;
+        }
+
+        .stat-card .number.blue { color: #4dc9f6; }
+        .stat-card .number.green { color: #00ff88; }
+        .stat-card .number.orange { color: #ffa500; }
+        .stat-card .number.red { color: #ff6b6b; }
+
+        .stat-card .label {
+            font-size: 0.55rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.15);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+
+        /* Search */
+        .search-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .search-row input {
+            flex: 1;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 10px;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            outline: none;
+            transition: 0.3s;
+            min-width: 200px;
+        }
+
+        .search-row input::placeholder {
+            color: rgba(255, 255, 255, 0.08);
+        }
+
+        .search-row input:focus {
+            border-color: rgba(77, 201, 246, 0.15);
+        }
+
+        /* Table */
+        .table-section {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 20px 22px;
+        }
+
+        .table-section .title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .table-section .title-row .title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.15);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .table-section .title-row .count {
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.1);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.7rem;
+        }
+
+        thead {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        th {
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.02);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        td .user-name {
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        td .wallet {
+            color: #ffd700;
+            font-weight: 600;
+        }
+
+        td .platform {
+            color: #4dc9f6;
+            font-size: 0.6rem;
+        }
+
+        td .key-text {
+            font-family: monospace;
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 0.55rem;
+            letter-spacing: 0.5px;
+        }
+
+        td .package-status {
+            font-size: 0.5rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 8px;
+        }
+
+        td .package-status.active {
+            background: rgba(0, 255, 136, 0.06);
+            color: #00ff88;
+        }
+
+        td .package-status.expired {
+            background: rgba(255, 50, 50, 0.06);
+            color: #ff6b6b;
+        }
+
+        td .package-status.pending {
+            background: rgba(255, 165, 0, 0.06);
+            color: #ffa500;
+        }
+
+        td .package-status.none {
+            background: rgba(255, 255, 255, 0.02);
+            color: rgba(255, 255, 255, 0.1);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 0.45rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .status-badge.active {
+            background: rgba(0, 255, 136, 0.06);
+            color: #00ff88;
+        }
+
+        .status-badge.blocked {
+            background: rgba(255, 50, 50, 0.06);
+            color: #ff6b6b;
+        }
+
+        .status-badge.pending {
+            background: rgba(255, 165, 0, 0.06);
+            color: #ffa500;
+        }
+
+        .action-btn {
+            padding: 4px 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .action-btn.view-btn {
+            background: rgba(77, 201, 246, 0.06);
+            color: #4dc9f6;
+        }
+
+        .action-btn.view-btn:hover {
+            background: rgba(77, 201, 246, 0.12);
+        }
+
+        .action-btn.block-btn {
+            background: rgba(255, 50, 50, 0.06);
+            color: #ff6b6b;
+        }
+
+        .action-btn.block-btn:hover {
+            background: rgba(255, 50, 50, 0.12);
+        }
+
+        .action-btn.unblock-btn {
+            background: rgba(0, 255, 136, 0.06);
+            color: #00ff88;
+        }
+
+        .action-btn.unblock-btn:hover {
+            background: rgba(0, 255, 136, 0.12);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px 20px;
+            color: rgba(255, 255, 255, 0.04);
+        }
+
+        .empty-state i {
+            font-size: 2rem;
+            opacity: 0.2;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: #0e1525;
+            border: 1px solid #1a2540;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 560px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .modal .modal-header h2 {
+            font-size: 1.1rem;
+        }
+
+        .modal .modal-header .close-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .modal .modal-header .close-btn:hover {
+            color: #ffffff;
+        }
+
+        .modal .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            align-items: center;
+        }
+
+        .modal .detail-row .label {
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .modal .detail-row .value {
+            color: #ffffff;
+            font-weight: 500;
+            font-size: 0.8rem;
+        }
+
+        .modal .detail-row .value.gold {
+            color: #ffd700;
+        }
+
+        .modal .detail-row .value.cyan {
+            color: #4dc9f6;
+        }
+
+        .modal .detail-row .value.green {
+            color: #00ff88;
+        }
+
+        /* Package Status Change */
+        .package-status-section {
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .package-status-section .status-label {
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.15);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .package-status-section .status-select-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .package-status-section .status-select-group select {
+            flex: 1;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 8px;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            outline: none;
+            min-width: 140px;
+        }
+
+        .package-status-section .status-select-group select option {
+            background: #080c18;
+            color: #ffffff;
+        }
+
+        .package-status-section .status-select-group select:focus {
+            border-color: rgba(77, 201, 246, 0.15);
+        }
+
+        .package-status-section .status-select-group .btn-save-status {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #4dc9f6, #2b8fc4);
+            color: #080c18;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .package-status-section .status-select-group .btn-save-status:hover {
+            transform: translateY(-2px);
+        }
+
+        .package-status-section .current-status {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.1);
+            margin-top: 6px;
+        }
+
+        /* Deposit Limit */
+        .deposit-limit-section {
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .deposit-limit-section .limit-label {
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.15);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .deposit-limit-section .limit-input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .deposit-limit-section .limit-input-group input {
+            flex: 1;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 8px;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            outline: none;
+            min-width: 120px;
+        }
+
+        .deposit-limit-section .limit-input-group input:focus {
+            border-color: rgba(77, 201, 246, 0.15);
+        }
+
+        .deposit-limit-section .limit-input-group .btn-save-limit {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #ffd700, #f0a500);
+            color: #080c18;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .deposit-limit-section .limit-input-group .btn-save-limit:hover {
+            transform: translateY(-2px);
+        }
+
+        .deposit-limit-section .current-limit {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.1);
+            margin-top: 6px;
+        }
+
+        .modal .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .modal .modal-actions .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .modal .modal-actions .btn-block {
+            background: linear-gradient(135deg, #ff6b6b, #cc4444);
+            color: #ffffff;
+        }
+
+        .modal .modal-actions .btn-block:hover {
+            transform: translateY(-2px);
+        }
+
+        .modal .modal-actions .btn-unblock {
+            background: linear-gradient(135deg, #00ff88, #00cc6a);
+            color: #080c18;
+        }
+
+        .modal .modal-actions .btn-unblock:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 360px;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transform: translateX(120%);
+            opacity: 0;
+            transition: 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+
+        #toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        #toast.success {
+            background: rgba(0, 255, 136, 0.08);
+            border-color: rgba(0, 255, 136, 0.05);
+            color: #00ff88;
+        }
+
+        #toast.error {
+            background: rgba(255, 50, 50, 0.08);
+            border-color: rgba(255, 50, 50, 0.05);
+            color: #ff6b6b;
+        }
+
+        #toast.warning {
+            background: rgba(255, 165, 0, 0.08);
+            border-color: rgba(255, 165, 0, 0.05);
+            color: #ffa500;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .header {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .header .placeholder {
+                display: none;
+            }
+            table {
+                font-size: 0.6rem;
+            }
+            th, td {
+                padding: 6px 6px;
+            }
+            .search-row {
+                flex-direction: column;
+            }
+            .search-row input {
+                min-width: unset;
+            }
+            .modal {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 12px; }
+            .stats-row {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            .stat-card .number {
+                font-size: 1.2rem;
+            }
+            .header h1 {
+                font-size: 1rem;
+            }
+            .table-section {
+                padding: 14px 12px;
+            }
+            .modal {
+                padding: 16px;
+            }
+            .modal .detail-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+            .modal .deposit-limit-section .limit-input-group,
+            .modal .package-status-section .status-select-group {
+                flex-direction: column;
+            }
+            .modal .deposit-limit-section .limit-input-group input,
+            .modal .package-status-section .status-select-group select {
+                width: 100%;
+            }
+            .modal .deposit-limit-section .limit-input-group .btn-save-limit,
+            .modal .package-status-section .status-select-group .btn-save-status {
+                width: 100%;
+            }
+        }
+    
+        /* ============================================================
+           PREMIUM USER DETAIL / WALLET CONTROL UI
+        ============================================================ */
+        .user-hero {
+            padding: 16px;
+            margin-bottom: 14px;
+            border: 1px solid rgba(77,201,246,.12);
+            border-radius: 16px;
+            background:
+                radial-gradient(circle at 90% 0%, rgba(77,201,246,.10), transparent 45%),
+                rgba(255,255,255,.025);
+        }
+        .user-hero .hero-name {
+            font-size: 1.15rem;
+            font-weight: 800;
+        }
+        .user-hero .hero-meta {
+            margin-top: 5px;
+            font-size: .68rem;
+            color: rgba(255,255,255,.38);
+            word-break: break-all;
+        }
+        .admin-section {
+            margin-top: 14px;
+            padding: 14px;
+            border: 1px solid rgba(255,255,255,.055);
+            border-radius: 14px;
+            background: rgba(255,255,255,.018);
+        }
+        .admin-section-title {
+            display:flex;
+            align-items:center;
+            gap:8px;
+            margin-bottom:11px;
+            font-size:.68rem;
+            font-weight:800;
+            letter-spacing:1.2px;
+            text-transform:uppercase;
+            color:rgba(255,255,255,.38);
+        }
+        .admin-section-title i { color:#4dc9f6; }
+        .wallet-control-grid {
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:9px;
+        }
+        .wallet-control-grid input,
+        .wallet-control-grid textarea {
+            width:100%;
+            padding:11px 12px;
+            border-radius:9px;
+            border:1px solid rgba(255,255,255,.07);
+            background:rgba(0,0,0,.16);
+            color:#fff;
+            outline:none;
+            font:500 .78rem Inter,sans-serif;
+        }
+        .wallet-control-grid textarea {
+            grid-column:1 / -1;
+            min-height:58px;
+            resize:vertical;
+        }
+        .wallet-btns {
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:9px;
+            margin-top:9px;
+        }
+        .wallet-btns button {
+            padding:11px 10px;
+            border:0;
+            border-radius:9px;
+            cursor:pointer;
+            font:800 .72rem Inter,sans-serif;
+        }
+        .wallet-btn-add {
+            color:#06130d;
+            background:linear-gradient(135deg,#00ff88,#00c96a);
+        }
+        .wallet-btn-remove {
+            color:#fff;
+            background:linear-gradient(135deg,#ff6b6b,#c83d52);
+        }
+        .wallet-current {
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:10px 0 2px;
+            font-size:.7rem;
+            color:rgba(255,255,255,.4);
+        }
+        .wallet-current strong {
+            color:#ffd700;
+            font-size:1.05rem;
+        }
+        .history-list {
+            display:flex;
+            flex-direction:column;
+            gap:7px;
+            max-height:220px;
+            overflow:auto;
+        }
+        .history-item {
+            padding:9px 10px;
+            border-radius:9px;
+            background:rgba(255,255,255,.018);
+            border:1px solid rgba(255,255,255,.035);
+            display:flex;
+            justify-content:space-between;
+            gap:10px;
+            align-items:center;
+        }
+        .history-item .left { min-width:0; }
+        .history-item .title {
+            font-size:.72rem;
+            color:rgba(255,255,255,.78);
+            font-weight:700;
+        }
+        .history-item .sub {
+            margin-top:3px;
+            font-size:.58rem;
+            color:rgba(255,255,255,.28);
+        }
+        .history-item .amount {
+            white-space:nowrap;
+            font-size:.72rem;
+            font-weight:800;
+        }
+        .amount-plus { color:#00ff88; }
+        .amount-minus { color:#ff6b6b; }
+        .empty-history {
+            padding:12px;
+            text-align:center;
+            font-size:.65rem;
+            color:rgba(255,255,255,.25);
+        }
+        .connection-card {
+            padding:11px;
+            border-radius:10px;
+            background:rgba(77,201,246,.025);
+            border:1px solid rgba(77,201,246,.07);
+        }
+        .connection-card .conn-main {
+            font-size:.78rem;
+            font-weight:800;
+            color:#4dc9f6;
+        }
+        .connection-card .conn-sub {
+            margin-top:4px;
+            font-size:.62rem;
+            color:rgba(255,255,255,.38);
+            line-height:1.55;
+        }
+        .limit-badge {
+            display:inline-flex;
+            align-items:center;
+            gap:5px;
+            padding:4px 8px;
+            border-radius:20px;
+            font-size:.58rem;
+            font-weight:800;
+            background:rgba(255,215,0,.06);
+            color:#ffd700;
+            border:1px solid rgba(255,215,0,.10);
+        }
+        @media (max-width:480px) {
+            .modal { padding:18px; max-height:94vh; }
+            .wallet-control-grid { grid-template-columns:1fr; }
+            .wallet-control-grid textarea { grid-column:auto; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="bg"></div>
+
+    <div id="toast">
+        <span id="toastMessage">Toast message</span>
+    </div>
+
+    <div class="container">
+
+        <!-- Header -->
+        <div class="header">
+            <a href="admin-panel.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
+            <h1>👥 <span>Users</span></h1>
+            <div class="placeholder"></div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row" id="statsRow">
+            <div class="stat-card">
+                <div class="number blue" id="totalUsers">0</div>
+                <div class="label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="number green" id="activeUsers">0</div>
+                <div class="label">Active</div>
+            </div>
+            <div class="stat-card">
+                <div class="number orange" id="blockedUsers">0</div>
+                <div class="label">Blocked</div>
+            </div>
+            <div class="stat-card">
+                <div class="number red" id="pendingUsers">0</div>
+                <div class="label">Pending</div>
+            </div>
+        </div>
+
+        <!-- Search -->
+        <div class="search-row">
+            <input type="text" id="searchInput" placeholder="🔍 Search by name, email, license key..." oninput="renderTable()" />
+        </div>
+
+        <!-- Table -->
+        <div class="table-section">
+            <div class="title-row">
+                <span class="title"><i class="fas fa-list"></i> All Users</span>
+                <span class="count" id="userCount">Total: 0</span>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>User</th>
+                            <th>License Key</th>
+                            <th>Platform</th>
+                            <th>Wallet</th>
+                            <th>Package</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody">
+                        <tr>
+                            <td colspan="8">
+                                <div class="empty-state">
+                                    <i class="fas fa-users"></i>
+                                    No users found
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>👤 User Details</h2>
+                <button class="close-btn" onclick="closeModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="modalBody">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js">
+    </script>
+
+    <script>
+        // ============================================================
+        // FIREBASE
+        // ============================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDFZpetqOy3nHj27rUo7js6Bny79sxnYvU",
+            authDomain: "ice-fishing-c20bc.firebaseapp.com",
+            projectId: "ice-fishing-c20bc",
+            storageBucket: "ice-fishing-c20bc.firebasestorage.app",
+            messagingSenderId: "220872632937",
+            appId: "1:220872632937:android:71997f3fd7dba6293a90f8"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        let allUsers = [];
+        let userConnections = {};
+        let userPackages = {};
+
+        // ============================================================
+        // CHECK ADMIN AUTH
+        // ============================================================
+        function checkAdminAuth() {
+            const adminKey = sessionStorage.getItem('adminKey');
+            const adminToken = sessionStorage.getItem('adminToken');
+
+            if (!adminKey || !adminToken) {
+                window.location.href = 'admin-login.html';
+                return false;
+            }
+            return true;
+        }
+
+        // ============================================================
+        // TOAST
+        // ============================================================
+        let toastTimer = null;
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+
+            if (toastTimer) clearTimeout(toastTimer);
+
+            toastMessage.textContent = message;
+            toast.className = type;
+            toast.classList.add('show');
+
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3500);
+        }
+
+        // ============================================================
+        // LOAD USERS
+        // ============================================================
+        function loadUsers() {
+            db.collection('users')
+                .orderBy('createdAt', 'desc')
+                .get()
+                .then((snapshot) => {
+                    allUsers = [];
+                    snapshot.forEach((doc) => {
+                        allUsers.push({ id: doc.id, ...doc.data() });
+                    });
+                    loadConnections();
+                    loadPackages();
+                })
+                .catch((error) => {
+                    console.error('Error loading users:', error);
+                });
+        }
+
+        // ============================================================
+        // LOAD CONNECTIONS
+        // ============================================================
+        function loadConnections() {
+            db.collection('userConnections')
+                .orderBy('createdAt', 'desc')
+                .get()
+                .then((snapshot) => {
+                    userConnections = {};
+                    snapshot.forEach((doc) => {
+                        const data = doc.data();
+                        if (!userConnections[data.userId] || data.status === 'active') {
+                            userConnections[data.userId] = data;
+                        }
+                    });
+                    updateStats();
+                    renderTable();
+                })
+                .catch((error) => {
+                    console.error('Error loading connections:', error);
+                    updateStats();
+                    renderTable();
+                });
+        }
+
+        // ============================================================
+        // LOAD PACKAGES
+        // ============================================================
+        function loadPackages() {
+            db.collection('userPackages')
+                .get()
+                .then((snapshot) => {
+                    userPackages = {};
+                    const packageRows = [];
+                    snapshot.forEach((doc) => packageRows.push(doc.data()));
+                    packageRows.sort((a, b) => {
+                        const av = a.createdAt && typeof a.createdAt.toMillis === 'function' ? a.createdAt.toMillis() : new Date(a.createdAt || 0).getTime();
+                        const bv = b.createdAt && typeof b.createdAt.toMillis === 'function' ? b.createdAt.toMillis() : new Date(b.createdAt || 0).getTime();
+                        return bv - av;
+                    });
+                    packageRows.forEach((data) => {
+                        if (data.userId && !userPackages[data.userId]) {
+                            userPackages[data.userId] = data;
+                        }
+                    });
+                    updateStats();
+                    renderTable();
+                })
+                .catch((error) => {
+                    console.error('Error loading packages:', error);
+                });
+        }
+
+        // ============================================================
+        // UPDATE STATS
+        // ============================================================
+        function updateStats() {
+            const total = allUsers.length;
+            const active = allUsers.filter(u => !u.isBlocked).length;
+            const blocked = allUsers.filter(u => u.isBlocked).length;
+            const pending = allUsers.filter(u => u.isBlocked === undefined).length;
+
+            document.getElementById('totalUsers').textContent = total;
+            document.getElementById('activeUsers').textContent = active;
+            document.getElementById('blockedUsers').textContent = blocked;
+            document.getElementById('pendingUsers').textContent = pending;
+            document.getElementById('userCount').textContent = 'Total: ' + total;
+        }
+
+        // ============================================================
+        // RENDER TABLE
+        // ============================================================
+        function renderTable() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const tbody = document.getElementById('userTableBody');
+
+            let filtered = allUsers;
+
+            if (search) {
+                filtered = filtered.filter(u =>
+                    (u.name || '').toLowerCase().includes(search) ||
+                    (u.email || '').toLowerCase().includes(search) ||
+                    (u.userKey || '').toLowerCase().includes(search)
+                );
+            }
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-state">
+                                <i class="fas fa-users"></i>
+                                No users found
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            let html = '';
+            let index = 1;
+
+            filtered.forEach((user) => {
+                const status = user.isBlocked ? 'blocked' : 'active';
+                const statusLabel = user.isBlocked ? '🔒 Blocked' : '✅ Active';
+                const connection = userConnections[user.id];
+                const platformName = connection ? connection.platformName || '—' : '—';
+                const platformUsername = connection ? connection.username || '' : '';
+                const platformDisplay = platformName + (platformUsername ? ' (' + platformUsername + ')' : '');
+                const wallet = user.walletBalance || 0;
+
+                const userPkg = userPackages[user.id];
+                const pkgStatus = userPkg ? userPkg.status : 'none';
+                const pkgName = userPkg ? userPkg.packageName : '—';
+                const pkgDisplay = pkgName + (pkgStatus !== 'none' ? ` <span class="package-status ${pkgStatus}">${pkgStatus}</span>` : '') +
+                    (Number(user.depositLimit || 0) > 0 ? ` <span class="limit-badge" style="margin-left:4px;">Limit $${Number(user.depositLimit).toFixed(0)}</span>` : '');
+
+                html += `
+                    <tr>
+                        <td>${index++}</td>
+                        <td>
+                            <span class="user-name">${user.name || 'Unknown'}</span>
+                            <br />
+                            <span style="font-size:0.5rem; color:rgba(255,255,255,0.1);">${user.email || ''}</span>
+                        </td>
+                        <td><span class="key-text">${user.userKey || '—'}</span></td>
+                        <td><span class="platform">${platformDisplay}</span></td>
+                        <td><span class="wallet">$${wallet.toFixed(2)}</span></td>
+                        <td style="font-size:0.6rem;">${pkgDisplay}</td>
+                        <td><span class="status-badge ${status}">${statusLabel}</span></td>
+                        <td>
+                            <button class="action-btn view-btn" onclick="viewUser('${user.id}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            ${user.isBlocked ? 
+                                `<button class="action-btn unblock-btn" onclick="toggleUser('${user.id}', false)">
+                                    <i class="fas fa-unlock"></i>
+                                </button>` :
+                                `<button class="action-btn block-btn" onclick="toggleUser('${user.id}', true)">
+                                    <i class="fas fa-lock"></i>
+                                </button>`
+                            }
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        // ============================================================
+        // VIEW USER
+        // ============================================================
+        async function viewUser(userId) {
+            const user = allUsers.find(u => u.id === userId);
+            if (!user) return;
+
+            const modal = document.getElementById('modalOverlay');
+            const body = document.getElementById('modalBody');
+
+            modal.classList.add('show');
+            body.innerHTML = `
+                <div style="padding:28px 10px;text-align:center;color:rgba(255,255,255,.45);">
+                    <i class="fas fa-spinner fa-spin" style="font-size:1.3rem;color:#4dc9f6;"></i>
+                    <div style="margin-top:10px;font-size:.72rem;">Loading complete user details...</div>
+                </div>
+            `;
+
+            try {
+                // Only simple where(userId) queries are used here.
+                // We sort/filter in JavaScript so this view does NOT require
+                // a composite Firestore index.
+                const [connectionsSnap, packagesSnap, depositsSnap] = await Promise.all([
+                    db.collection('userConnections').where('userId', '==', userId).get(),
+                    db.collection('userPackages').where('userId', '==', userId).get(),
+                    db.collection('deposits').where('userId', '==', userId).get()
+                ]);
+
+                const connections = [];
+                connectionsSnap.forEach(doc => connections.push({ id: doc.id, ...doc.data() }));
+
+                const packages = [];
+                packagesSnap.forEach(doc => packages.push({ id: doc.id, ...doc.data() }));
+
+                const deposits = [];
+                depositsSnap.forEach(doc => deposits.push({ id: doc.id, ...doc.data() }));
+
+                const toMillis = (value) => {
+                    if (!value) return 0;
+                    if (typeof value.toMillis === 'function') return value.toMillis();
+                    if (typeof value.toDate === 'function') return value.toDate().getTime();
+                    const n = new Date(value).getTime();
+                    return Number.isFinite(n) ? n : 0;
+                };
+
+                const formatDate = (value) => {
+                    const ms = toMillis(value);
+                    if (!ms) return '—';
+                    return new Date(ms).toLocaleString('en-US', {
+                        month:'short', day:'numeric', year:'numeric',
+                        hour:'2-digit', minute:'2-digit'
+                    });
+                };
+
+                const money = (value) => Number(value || 0).toFixed(2);
+                const esc = (value) => String(value ?? '—')
+                    .replace(/&/g,'&amp;')
+                    .replace(/</g,'&lt;')
+                    .replace(/>/g,'&gt;')
+                    .replace(/"/g,'&quot;')
+                    .replace(/'/g,'&#039;');
+
+                connections.sort((a,b) => toMillis(b.createdAt) - toMillis(a.createdAt));
+                packages.sort((a,b) => toMillis(b.createdAt) - toMillis(a.createdAt));
+                deposits.sort((a,b) => toMillis(b.createdAt) - toMillis(a.createdAt));
+
+                const connection = connections.find(c => c.status === 'active') || connections[0] || null;
+                const userPkg = packages[0] || userPackages[userId] || null;
+                const pkgStatus = userPkg ? (userPkg.status || 'pending') : (user.packageStatus || 'none');
+                const wallet = Number(user.walletBalance || 0);
+                const depositLimit = Number(user.depositLimit || 0);
+
+                const statusColor = user.isBlocked ? '#ff6b6b' : '#00ff88';
+                const statusText = user.isBlocked ? '🔒 Blocked' : '✅ Active';
+
+                const connectionHtml = connection ? `
+                    <div class="connection-card">
+                        <div class="conn-main">
+                            <i class="fas fa-link"></i>
+                            ${esc(connection.platformName || 'Platform')}
+                            <span style="font-size:.58rem;color:${connection.status === 'active' ? '#00ff88' : '#ffa500'};">
+                                • ${esc(connection.status || 'unknown')}
+                            </span>
+                        </div>
+                        <div class="conn-sub">
+                            Site: <strong>${esc(connection.siteName || '—')}</strong><br>
+                            Username / ID: <strong>${esc(connection.username || '—')}</strong><br>
+                            Platform ID: ${esc(connection.platformId || '—')}<br>
+                            Connected: ${formatDate(connection.createdAt)}
+                        </div>
+                    </div>
+                ` : `<div class="empty-history">🔗 No connected profile found.</div>`;
+
+                const packageHistoryHtml = packages.length ? packages.slice(0, 10).map(p => `
+                    <div class="history-item">
+                        <div class="left">
+                            <div class="title">📦 ${esc(p.packageName || 'Package')}</div>
+                            <div class="sub">${esc(p.status || 'pending')} • ${formatDate(p.createdAt)}</div>
+                        </div>
+                        <div class="amount ${String(p.status || '').toLowerCase() === 'active' ? 'amount-plus' : ''}">
+                            $${money(p.amount)}
+                        </div>
+                    </div>
+                `).join('') : `<div class="empty-history">No package records.</div>`;
+
+                const depositHistoryHtml = deposits.length ? deposits.slice(0, 10).map(d => {
+                    const st = String(d.status || 'pending').toLowerCase();
+                    const colorClass = st === 'approved' ? 'amount-plus' : st === 'rejected' ? 'amount-minus' : '';
+                    return `
+                        <div class="history-item">
+                            <div class="left">
+                                <div class="title">💰 Deposit • ${esc(d.status || 'pending')}</div>
+                                <div class="sub">${esc(d.paymentMethod || d.method || d.currency || 'Deposit request')} • ${formatDate(d.createdAt)}</div>
+                            </div>
+                            <div class="amount ${colorClass}">$${money(d.amount)}</div>
+                        </div>
+                    `;
+                }).join('') : `<div class="empty-history">No deposit records.</div>`;
+
+                const lastAdjustment = user.lastWalletAdjustment || null;
+                const adjustmentHtml = lastAdjustment ? `
+                    <div class="history-item">
+                        <div class="left">
+                            <div class="title">🛠 Last admin wallet adjustment</div>
+                            <div class="sub">${esc(lastAdjustment.reason || 'Admin adjustment')} • ${formatDate(lastAdjustment.at)}</div>
+                        </div>
+                        <div class="amount ${Number(lastAdjustment.amount || 0) >= 0 ? 'amount-plus' : 'amount-minus'}">
+                            ${Number(lastAdjustment.amount || 0) >= 0 ? '+' : ''}$${money(lastAdjustment.amount)}
+                        </div>
+                    </div>
+                ` : `<div class="empty-history">No admin wallet adjustment recorded.</div>`;
+
+                const dateStr = formatDate(user.createdAt);
+
+                body.innerHTML = `
+                    <div class="user-hero">
+                        <div class="hero-name">${esc(user.name || 'Unknown')} ${user.isBlocked ? '🔒' : '🟢'}</div>
+                        <div class="hero-meta">${esc(user.email || 'No email')} • UID: ${esc(user.id)}</div>
+                    </div>
+
+                    <div class="admin-section">
+                        <div class="admin-section-title"><i class="fas fa-id-card"></i> Account Overview</div>
+                        <div class="detail-row"><span class="label">Name</span><span class="value">${esc(user.name || 'Unknown')}</span></div>
+                        <div class="detail-row"><span class="label">Email</span><span class="value">${esc(user.email || '—')}</span></div>
+                        <div class="detail-row"><span class="label">License Key</span><span class="value" style="color:#ffd700;font-family:monospace;">${esc(user.userKey || '—')}</span></div>
+                        <div class="detail-row"><span class="label">UID</span><span class="value" style="font-size:.62rem;">${esc(user.id)}</span></div>
+                        <div class="detail-row"><span class="label">Joined</span><span class="value">${dateStr}</span></div>
+                        <div class="detail-row"><span class="label">User Status</span><span class="value" style="color:${statusColor};">${statusText}</span></div>
+                        <div class="detail-row"><span class="label">Signal</span><span class="value" style="color:${user.signalActive ? '#00ff88' : '#ff6b6b'};">${user.signalActive ? '🟢 Active' : '🔴 Inactive'}</span></div>
+                        <div class="detail-row"><span class="label">Total Fish</span><span class="value">${Number(user.totalFish || 0)}</span></div>
+                        <div class="detail-row"><span class="label">Total Score</span><span class="value">${Number(user.totalScore || 0)}</span></div>
+                    </div>
+
+                    <div class="admin-section">
+                        <div class="admin-section-title"><i class="fas fa-wallet"></i> Wallet Control</div>
+                        <div class="wallet-current">
+                            <span>Current wallet balance</span>
+                            <strong id="adminWalletCurrent">$${money(wallet)}</strong>
+                        </div>
+                        <div class="wallet-control-grid">
+                            <input type="number" id="walletAdjustAmount" min="0" step="0.01" placeholder="Amount (USD)">
+                            <input type="text" id="walletAdjustReason" placeholder="Reason (optional)">
+                        </div>
+                        <div class="wallet-btns">
+                            <button class="wallet-btn-add" onclick="adjustUserWallet('${user.id}', 'add')">
+                                <i class="fas fa-plus-circle"></i> Add Balance
+                            </button>
+                            <button class="wallet-btn-remove" onclick="adjustUserWallet('${user.id}', 'remove')">
+                                <i class="fas fa-minus-circle"></i> Remove Balance
+                            </button>
+                        </div>
+                        <div style="margin-top:9px;">${adjustmentHtml}</div>
+                    </div>
+
+                    <div class="admin-section">
+                        <div class="admin-section-title"><i class="fas fa-credit-card"></i> Deposit Limit</div>
+                        <div style="margin-bottom:9px;">
+                            <span class="limit-badge">👤 Individual user limit</span>
+                        </div>
+                        <div class="deposit-limit-section" style="margin-top:0;padding-top:0;border-top:0;">
+                            <div class="limit-input-group">
+                                <input type="number" id="depositLimitInput" placeholder="0 = no custom limit" value="${depositLimit}" min="0" step="0.01" />
+                                <button class="btn-save-limit" onclick="saveDepositLimit('${user.id}')">
+                                    <i class="fas fa-save"></i> Save
+                                </button>
+                            </div>
+                            <div class="current-limit">Current limit: ${depositLimit > 0 ? '$' + money(depositLimit) : 'No custom limit'}</div>
+                        </div>
+                    </div>
+
+                    <div class="admin-section">
+                        <div class="admin-section-title"><i class="fas fa-box"></i> Package</div>
+                        <div class="detail-row"><span class="label">Package</span><span class="value cyan">${esc(userPkg ? userPkg.packageName : '—')}</span></div>
+                        <div class="detail-row"><span class="label">Price</span><span class="value gold">$${money(userPkg ? userPkg.amount : 0)}</span></div>
+                        <div class="detail-row"><span class="label">Status</span><span class="value" style="color:${pkgStatus === 'active' ? '#00ff88' : pkgStatus === 'expired' ? '#ff6b6b' : '#ffa500'};text-transform:capitalize;">${esc(pkgStatus)}</span></div>
+                        <div class="detail-row"><span class="label">Expiry</span><span class="value">${formatDate(userPkg ? userPkg.expiryTime : null)}</span></div>
+
+                        <div class="package-status-section" style="margin-top:10px;">
+                            <div class="status-select-group">
+                                <select id="packageStatusSelect">
+                                    <option value="active" ${pkgStatus === 'active' ? 'selected' : ''}>🟢 Active</option>
+                                    <option value="expired" ${pkgStatus === 'expired' ? 'selected' : ''}>🔴 Expired</option>
+                                    <option value="pending" ${pkgStatus === 'pending' ? 'selected' : ''}>🟡 Pending</option>
+                                    <option value="none" ${pkgStatus === 'none' || !pkgStatus ? 'selected' : ''}>⚪ None</option>
+                                </select>
+                                <button class="btn-save-status" onclick="savePackageStatus('${user.id}')">
+                                    <i class="fas fa-save"></i> Update
+                                </button>
+                            </div>
+                            <div class="current-status">Current: ${esc(pkgStatus || 'None')}</div>
+                        </div>
+
+                        <div style="margin-top:10px;" class="history-list">${packageHistoryHtml}</div>
+                    </div>
+
+                    <div class="admin-section">
+                        <div class="admin-section-title"><i class="fas fa-link"></i> Connected Profile</div>
+                        ${connectionHtml}
+                    </div>
+
+                    <div class="admin-section">
+                        <div class="admin-section-title"><i class="fas fa-money-bill-transfer"></i> Deposit History</div>
+                        <div class="history-list">${depositHistoryHtml}</div>
+                    </div>
+
+                    <div class="modal-actions">
+                        ${user.isBlocked ?
+                            `<button class="btn btn-unblock" onclick="toggleUser('${user.id}', false); closeModal();">
+                                <i class="fas fa-unlock"></i> Unblock User
+                            </button>` :
+                            `<button class="btn btn-block" onclick="toggleUser('${user.id}', true); closeModal();">
+                                <i class="fas fa-lock"></i> Block User
+                            </button>`
+                        }
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading user details:', error);
+                body.innerHTML = `
+                    <div class="msg show error" style="display:block;">
+                        ❌ Failed to load complete user details.<br>
+                        <small>${String(error.message || error)}</small>
+                    </div>
+                `;
+            }
+        }
+
+        // ============================================================
+        // SAVE PACKAGE STATUS
+        // ============================================================
+        async function savePackageStatus(userId) {
+            const select = document.getElementById('packageStatusSelect');
+            const newStatus = select.value;
+
+            try {
+                // Index-free: query by userId only, then choose newest package in JS.
+                const querySnapshot = await db.collection('userPackages')
+                    .where('userId', '==', userId)
+                    .get();
+
+                if (querySnapshot.empty) {
+                    showToast('❌ No package found for this user.', 'error');
+                    return;
+                }
+
+                const docs = querySnapshot.docs.slice().sort((a, b) => {
+                    const av = a.data().createdAt;
+                    const bv = b.data().createdAt;
+                    const am = av && typeof av.toMillis === 'function' ? av.toMillis() : new Date(av || 0).getTime();
+                    const bm = bv && typeof bv.toMillis === 'function' ? bv.toMillis() : new Date(bv || 0).getTime();
+                    return bm - am;
+                });
+
+                const doc = docs[0];
+                const docId = doc.id;
+
+                await db.collection('userPackages').doc(docId).update({
+                    status: newStatus,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                const userUpdate = {
+                    packageStatus: newStatus,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                if (newStatus === 'active') userUpdate.signalActive = true;
+                if (newStatus === 'expired' || newStatus === 'none') userUpdate.signalActive = false;
+
+                await db.collection('users').doc(userId).update(userUpdate);
+
+                showToast('✅ Package status updated to: ' + newStatus, 'success');
+
+                if (userPackages[userId]) {
+                    userPackages[userId].status = newStatus;
+                }
+
+                const current = document.querySelector('.current-status');
+                if (current) current.textContent = 'Current: ' + newStatus;
+
+                const user = allUsers.find(u => u.id === userId);
+                if (user) {
+                    user.packageStatus = newStatus;
+                    if (newStatus === 'active') user.signalActive = true;
+                    if (newStatus === 'expired' || newStatus === 'none') user.signalActive = false;
+                }
+
+                renderTable();
+            } catch (error) {
+                console.error('Error saving package status:', error);
+                showToast('❌ Failed to update: ' + error.message, 'error');
+            }
+        }
+
+        // ============================================================
+        // ADMIN WALLET ADD / REMOVE
+        // ============================================================
+        async function adjustUserWallet(userId, action) {
+            const amountInput = document.getElementById('walletAdjustAmount');
+            const reasonInput = document.getElementById('walletAdjustReason');
+
+            const amount = Number.parseFloat(amountInput ? amountInput.value : '');
+            const reason = (reasonInput ? reasonInput.value : '').trim();
+
+            if (!Number.isFinite(amount) || amount <= 0) {
+                showToast('❌ Enter a valid amount greater than 0.', 'error');
+                return;
+            }
+
+            const user = allUsers.find(u => u.id === userId);
+            if (!user) {
+                showToast('❌ User not found.', 'error');
+                return;
+            }
+
+            const delta = action === 'add' ? amount : -amount;
+            const verb = action === 'add' ? 'add' : 'remove';
+
+            if (!confirm(`Are you sure you want to ${verb} $${amount.toFixed(2)} ${action === 'add' ? 'to' : 'from'} ${user.name || 'this user'}?`)) {
+                return;
+            }
+
+            try {
+                const userRef = db.collection('users').doc(userId);
+                let newBalance = 0;
+
+                await db.runTransaction(async (transaction) => {
+                    const snap = await transaction.get(userRef);
+                    if (!snap.exists) throw new Error('User document does not exist.');
+
+                    const data = snap.data() || {};
+                    const currentBalance = Number(data.walletBalance || 0);
+
+                    newBalance = currentBalance + delta;
+
+                    if (newBalance < 0) {
+                        throw new Error('Wallet balance cannot go below $0.00.');
+                    }
+
+                    transaction.update(userRef, {
+                        walletBalance: newBalance,
+                        lastWalletAdjustment: {
+                            amount: delta,
+                            reason: reason || (action === 'add' ? 'Admin added balance' : 'Admin removed balance'),
+                            type: action,
+                            at: firebase.firestore.FieldValue.serverTimestamp()
+                        },
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                });
+
+                user.walletBalance = newBalance;
+                renderTable();
+
+                const currentEl = document.getElementById('adminWalletCurrent');
+                if (currentEl) currentEl.textContent = '$' + newBalance.toFixed(2);
+
+                amountInput.value = '';
+                reasonInput.value = '';
+
+                showToast(
+                    `✅ ${action === 'add' ? 'Added' : 'Removed'} $${amount.toFixed(2)}. New balance: $${newBalance.toFixed(2)}`,
+                    'success'
+                );
+            } catch (error) {
+                console.error('Wallet adjustment error:', error);
+                showToast('❌ Wallet update failed: ' + error.message, 'error');
+            }
+        }
+
+        // ============================================================
+        // SAVE DEPOSIT LIMIT
+        // ============================================================
+        async function saveDepositLimit(userId) {
+            const input = document.getElementById('depositLimitInput');
+            const amount = parseFloat(input.value);
+
+            if (isNaN(amount) || amount < 0) {
+                showToast('❌ Please enter a valid amount.', 'error');
+                return;
+            }
+
+            try {
+                await db.collection('users').doc(userId).update({
+                    depositLimit: amount,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                showToast('✅ Deposit limit updated to $' + amount.toFixed(2), 'success');
+                
+                const user = allUsers.find(u => u.id === userId);
+                if (user) {
+                    user.depositLimit = amount;
+                }
+                
+                document.querySelector('.current-limit').textContent = 'Current limit: $' + amount.toFixed(2);
+                renderTable();
+            } catch (error) {
+                console.error('Error saving deposit limit:', error);
+                showToast('❌ Failed to save: ' + error.message, 'error');
+            }
+        }
+
+        // ============================================================
+        // TOGGLE USER BLOCK
+        // ============================================================
+        async function toggleUser(userId, block) {
+            const action = block ? 'block' : 'unblock';
+            if (!confirm(`Are you sure you want to ${action} this user?`)) return;
+
+            try {
+                await db.collection('users').doc(userId).update({
+                    isBlocked: block,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                showToast(block ? '🔒 User blocked' : '🔓 User unblocked', 'success');
+                loadUsers();
+            } catch (error) {
+                console.error('Error toggling user:', error);
+                showToast('❌ Failed to ' + action + ' user: ' + error.message, 'error');
+            }
+        }
+
+        // ============================================================
+        // CLOSE MODAL
+        // ============================================================
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('show');
+        }
+
+        // ============================================================
+        // CLOSE MODAL ON OVERLAY CLICK
+        // ============================================================
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        if (checkAdminAuth()) {
+            loadUsers();
+            setInterval(loadUsers, 30000);
+        }
+    </script>
+
+</body>
+</html>
