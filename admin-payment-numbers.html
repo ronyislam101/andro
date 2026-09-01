@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment Numbers - ICE FISHING Admin</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #080c18;
+            font-family: 'Inter', sans-serif;
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        .bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background:
+                radial-gradient(ellipse at 50% 30%, rgba(0, 120, 255, 0.06) 0%, transparent 55%),
+                radial-gradient(ellipse at 50% 80%, rgba(255, 215, 0, 0.03) 0%, transparent 45%),
+                #080c18;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+        }
+
+        .header .back-btn {
+            padding: 8px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.7rem;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+
+        .header .back-btn:hover {
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .header h1 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            flex: 1;
+            text-align: center;
+        }
+
+        .header h1 span {
+            color: #4dc9f6;
+        }
+
+        .header .placeholder {
+            width: 80px;
+        }
+
+        /* Region Tabs */
+        .region-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .region-tabs .tab {
+            padding: 10px 24px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            color: rgba(255, 255, 255, 0.3);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .region-tabs .tab:hover {
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .region-tabs .tab.active {
+            border-color: rgba(77, 201, 246, 0.15);
+            background: rgba(77, 201, 246, 0.04);
+            color: #4dc9f6;
+        }
+
+        /* Add Section */
+        .add-section {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 20px 22px;
+            margin-bottom: 20px;
+        }
+
+        .add-section .title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.15);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+        }
+
+        .add-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 12px;
+            align-items: end;
+        }
+
+        .add-row .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .add-row .field-group label {
+            font-size: 0.55rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .add-row input,
+        .add-row select {
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 10px;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            outline: none;
+            transition: 0.3s;
+            width: 100%;
+        }
+
+        .add-row input::placeholder {
+            color: rgba(255, 255, 255, 0.08);
+        }
+
+        .add-row input:focus,
+        .add-row select:focus {
+            border-color: rgba(77, 201, 246, 0.15);
+            background: rgba(77, 201, 246, 0.02);
+        }
+
+        .add-row select option {
+            background: #080c18;
+            color: #ffffff;
+        }
+
+        .btn-add-payment {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #4dc9f6, #2b8fc4);
+            color: #080c18;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            white-space: nowrap;
+            height: 42px;
+            align-self: end;
+        }
+
+        .btn-add-payment:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(77, 201, 246, 0.15);
+        }
+
+        .btn-add-payment:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Table */
+        .table-section {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 20px 22px;
+        }
+
+        .table-section .title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .table-section .title-row .title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.15);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .table-section .title-row .count {
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.1);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+        }
+
+        thead {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        th {
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.02);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        td .method-name {
+            color: #4dc9f6;
+            font-weight: 500;
+        }
+
+        td .payment-address {
+            color: #ffd700;
+            font-family: monospace;
+            font-size: 0.7rem;
+        }
+
+        td .instruction-text {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.65rem;
+        }
+
+        .region-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 0.5rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .region-badge.bangladesh {
+            background: rgba(0, 212, 170, 0.06);
+            color: #00d4aa;
+        }
+
+        .region-badge.india {
+            background: rgba(255, 215, 0, 0.06);
+            color: #ffd700;
+        }
+
+        .region-badge.worldwide {
+            background: rgba(77, 201, 246, 0.06);
+            color: #4dc9f6;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 0.45rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .status-badge.active {
+            background: rgba(0, 255, 136, 0.06);
+            color: #00ff88;
+        }
+
+        .status-badge.inactive {
+            background: rgba(255, 50, 50, 0.06);
+            color: #ff6b6b;
+        }
+
+        .action-btn {
+            padding: 4px 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .action-btn.edit-btn {
+            background: rgba(77, 201, 246, 0.06);
+            color: #4dc9f6;
+        }
+
+        .action-btn.edit-btn:hover {
+            background: rgba(77, 201, 246, 0.12);
+        }
+
+        .action-btn.toggle-btn {
+            background: rgba(255, 165, 0, 0.06);
+            color: #ffa500;
+        }
+
+        .action-btn.toggle-btn:hover {
+            background: rgba(255, 165, 0, 0.12);
+        }
+
+        .action-btn.delete-btn {
+            background: rgba(255, 50, 50, 0.06);
+            color: #ff6b6b;
+        }
+
+        .action-btn.delete-btn:hover {
+            background: rgba(255, 50, 50, 0.12);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px 20px;
+            color: rgba(255, 255, 255, 0.04);
+        }
+
+        .empty-state i {
+            font-size: 2rem;
+            opacity: 0.2;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 360px;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transform: translateX(120%);
+            opacity: 0;
+            transition: 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+
+        #toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        #toast.success {
+            background: rgba(0, 255, 136, 0.08);
+            border-color: rgba(0, 255, 136, 0.05);
+            color: #00ff88;
+        }
+
+        #toast.error {
+            background: rgba(255, 50, 50, 0.08);
+            border-color: rgba(255, 50, 50, 0.05);
+            color: #ff6b6b;
+        }
+
+        #toast.warning {
+            background: rgba(255, 165, 0, 0.08);
+            border-color: rgba(255, 165, 0, 0.05);
+            color: #ffa500;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .header .placeholder {
+                display: none;
+            }
+            table {
+                font-size: 0.65rem;
+            }
+            th, td {
+                padding: 6px 6px;
+            }
+            .add-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .add-row .field-group {
+                width: 100%;
+            }
+            .btn-add-payment {
+                width: 100%;
+                height: auto;
+                padding: 12px;
+            }
+            .region-tabs {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 12px; }
+            .header h1 {
+                font-size: 1rem;
+            }
+            .table-section {
+                padding: 14px 12px;
+            }
+            .add-section {
+                padding: 16px 14px;
+            }
+            .region-tabs .tab {
+                padding: 6px 14px;
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg"></div>
+
+    <div id="toast">
+        <span id="toastMessage">Toast message</span>
+    </div>
+
+    <div class="container">
+
+        <!-- Header -->
+        <div class="header">
+            <a href="admin-panel.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
+            <h1>📱 <span>Payment</span> Numbers</h1>
+            <div class="placeholder"></div>
+        </div>
+
+        <!-- Region Tabs -->
+        <div class="region-tabs" id="regionTabs">
+            <button class="tab active" data-region="bangladesh" onclick="switchRegion('bangladesh')">
+                🇧🇩 Bangladesh
+            </button>
+            <button class="tab" data-region="india" onclick="switchRegion('india')">
+                🇮🇳 India
+            </button>
+            <button class="tab" data-region="worldwide" onclick="switchRegion('worldwide')">
+                🌍 Worldwide
+            </button>
+        </div>
+
+        <!-- Add Section -->
+        <div class="add-section">
+            <div class="title"><i class="fas fa-plus-circle"></i> Add New Payment Method</div>
+
+            <div class="add-row">
+                <div class="field-group">
+                    <label>Method Name</label>
+                    <input type="text" id="methodNameInput" placeholder="e.g. Bkash, UPI, BTC" />
+                </div>
+                <div class="field-group">
+                    <label>Number / Address</label>
+                    <input type="text" id="paymentAddressInput" placeholder="Enter number or wallet address" />
+                </div>
+                <div class="field-group">
+                    <label>Instruction</label>
+                    <select id="instructionSelect">
+                        <option value="Send Money">Send Money</option>
+                        <option value="Cash Out">Cash Out</option>
+                        <option value="Pay">Pay</option>
+                        <option value="Send Crypto">Send Crypto</option>
+                    </select>
+                </div>
+                <button class="btn-add-payment" id="addBtn" onclick="addPaymentMethod()">
+                    <i class="fas fa-plus"></i> Add
+                </button>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-section">
+            <div class="title-row">
+                <span class="title"><i class="fas fa-list"></i> <span id="regionTitle">Bangladesh</span> Payment Methods</span>
+                <span class="count" id="paymentCount">Total: 0</span>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Method</th>
+                            <th>Number / Address</th>
+                            <th>Instruction</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="paymentTableBody">
+                        <tr>
+                            <td colspan="6">
+                                <div class="empty-state">
+                                    <i class="fas fa-credit-card"></i>
+                                    No payment methods added for this region
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js">
+    </script>
+
+    <script>
+        // ============================================================
+        // FIREBASE
+        // ============================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDFZpetqOy3nHj27rUo7js6Bny79sxnYvU",
+            authDomain: "ice-fishing-c20bc.firebaseapp.com",
+            projectId: "ice-fishing-c20bc",
+            storageBucket: "ice-fishing-c20bc.firebasestorage.app",
+            messagingSenderId: "220872632937",
+            appId: "1:220872632937:android:71997f3fd7dba6293a90f8"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // ============================================================
+        // STATE
+        // ============================================================
+        let currentRegion = 'bangladesh';
+        let allPayments = [];
+
+        // ============================================================
+        // CHECK ADMIN AUTH
+        // ============================================================
+        function checkAdminAuth() {
+            const adminKey = sessionStorage.getItem('adminKey');
+            const adminToken = sessionStorage.getItem('adminToken');
+
+            if (!adminKey || !adminToken) {
+                window.location.href = 'admin-login.html';
+                return false;
+            }
+            return true;
+        }
+
+        // ============================================================
+        // TOAST
+        // ============================================================
+        let toastTimer = null;
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+
+            if (toastTimer) clearTimeout(toastTimer);
+
+            toastMessage.textContent = message;
+            toast.className = type;
+            toast.classList.add('show');
+
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3500);
+        }
+
+        // ============================================================
+        // SWITCH REGION
+        // ============================================================
+        function switchRegion(region) {
+            currentRegion = region;
+
+            document.querySelectorAll('.region-tabs .tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.dataset.region === region) {
+                    tab.classList.add('active');
+                }
+            });
+
+            document.getElementById('regionTitle').textContent =
+                region.charAt(0).toUpperCase() + region.slice(1);
+
+            loadPaymentMethods();
+        }
+
+        // ============================================================
+        // LOAD PAYMENT METHODS
+        // ============================================================
+        function loadPaymentMethods() {
+            db.collection('paymentMethods')
+                .get()
+                .then((snapshot) => {
+                    allPayments = [];
+                    snapshot.forEach((doc) => {
+                        const item = { id: doc.id, ...doc.data() };
+                         const regions = Array.isArray(item.regions) ? item.regions.map(x => String(x).toLowerCase()) : [];
+                         if ((regions.length ? regions.includes(String(currentRegion).toLowerCase()) : String(item.region || '').toLowerCase() === String(currentRegion).toLowerCase())) allPayments.push(item);
+                    });
+                    allPayments.sort((a,b) => { const aa = a.createdAt?.seconds || 0; const bb = b.createdAt?.seconds || 0; return bb-aa; });
+                    renderTable();
+                })
+                .catch((error) => {
+                    console.error('Error loading payment methods:', error);
+                });
+        }
+
+        // ============================================================
+        // RENDER TABLE
+        // ============================================================
+        function renderTable() {
+            const tbody = document.getElementById('paymentTableBody');
+            document.getElementById('paymentCount').textContent = 'Total: ' + allPayments.length;
+
+            if (allPayments.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <i class="fas fa-credit-card"></i>
+                                No payment methods added for this region
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            let html = '';
+            let index = 1;
+
+            allPayments.forEach((p) => {
+                const statusClass = p.isActive !== false ? 'active' : 'inactive';
+                const statusLabel = p.isActive !== false ? 'Active' : 'Inactive';
+
+                html += `
+                    <tr>
+                        <td>${index++}</td>
+                        <td><span class="method-name">${p.method || '—'}</span></td>
+                        <td><span class="payment-address">${p.address || '—'}</span></td>
+                        <td><span class="instruction-text">${p.instruction || '—'}</span></td>
+                        <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
+                        <td>
+                            <button class="action-btn edit-btn" onclick="editPayment('${p.id}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn toggle-btn" onclick="togglePayment('${p.id}', ${p.isActive !== false})">
+                                <i class="fas ${p.isActive !== false ? 'fa-pause' : 'fa-play'}"></i>
+                            </button>
+                            <button class="action-btn delete-btn" onclick="deletePayment('${p.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        // ============================================================
+        // ADD PAYMENT METHOD
+        // ============================================================
+        async function addPaymentMethod() {
+            const method = document.getElementById('methodNameInput').value.trim();
+            const address = document.getElementById('paymentAddressInput').value.trim();
+            const instruction = document.getElementById('instructionSelect').value;
+
+            if (!method || !address) {
+                showToast('❌ Please fill in all fields.', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('addBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+
+            try {
+                await db.collection('paymentMethods').add({
+                    method: method,
+                    address: address,
+                    instruction: instruction,
+                    region: currentRegion,
+                    isActive: true,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                showToast('✅ Payment method added successfully!', 'success');
+
+                document.getElementById('methodNameInput').value = '';
+                document.getElementById('paymentAddressInput').value = '';
+
+                loadPaymentMethods();
+
+            } catch (error) {
+                console.error('Error adding payment method:', error);
+                showToast('❌ Failed to add: ' + error.message, 'error');
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-plus"></i> Add';
+        }
+
+        // ============================================================
+        // TOGGLE PAYMENT
+        // ============================================================
+        async function togglePayment(docId, currentStatus) {
+            const newStatus = !currentStatus;
+            const action = newStatus ? 'activate' : 'deactivate';
+
+            if (!confirm(`Are you sure you want to ${action} this payment method?`)) return;
+
+            try {
+                await db.collection('paymentMethods').doc(docId).update({
+                    isActive: newStatus,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                showToast(`✅ Payment method ${action}d`, 'success');
+                loadPaymentMethods();
+            } catch (error) {
+                console.error('Error toggling payment:', error);
+                showToast('❌ Failed to toggle: ' + error.message, 'error');
+            }
+        }
+
+        // ============================================================
+        // EDIT PAYMENT
+        // ============================================================
+        function editPayment(docId) {
+            const payment = allPayments.find(p => p.id === docId);
+            if (!payment) return;
+
+            const newMethod = prompt('Enter new method name:', payment.method);
+            if (newMethod === null) return;
+
+            const newAddress = prompt('Enter new number/address:', payment.address);
+            if (newAddress === null) return;
+
+            const newInstruction = prompt('Enter new instruction (Send Money / Cash Out / Pay / Send Crypto):', payment.instruction);
+            if (newInstruction === null) return;
+
+            if (newMethod.trim() && newAddress.trim() && newInstruction.trim()) {
+                db.collection('paymentMethods').doc(docId).update({
+                    method: newMethod.trim(),
+                    address: newAddress.trim(),
+                    instruction: newInstruction.trim(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                })
+                .then(() => {
+                    showToast('✅ Payment method updated!', 'success');
+                    loadPaymentMethods();
+                })
+                .catch((error) => {
+                    console.error('Error updating payment:', error);
+                    showToast('❌ Failed to update: ' + error.message, 'error');
+                });
+            } else {
+                showToast('❌ All fields are required.', 'error');
+            }
+        }
+
+        // ============================================================
+        // DELETE PAYMENT
+        // ============================================================
+        async function deletePayment(docId) {
+            if (!confirm('⚠️ Are you sure you want to delete this payment method?')) return;
+
+            try {
+                await db.collection('paymentMethods').doc(docId).delete();
+                showToast('🗑️ Payment method deleted', 'warning');
+                loadPaymentMethods();
+            } catch (error) {
+                console.error('Error deleting payment:', error);
+                showToast('❌ Failed to delete: ' + error.message, 'error');
+            }
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        if (checkAdminAuth()) {
+            loadPaymentMethods();
+            setInterval(loadPaymentMethods, 30000);
+        }
+    </script>
+
+</body>
+</html>
