@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ICE FISHING - Admin Panel</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <style>
+        /* ============================================================
+           ROOT VARIABLES
+           ============================================================ */
+        :root {
+            --bg: #080c18;
+            --card: #0e1525;
+            --card-hover: #141d30;
+            --border: #1a2540;
+            --border-light: #243050;
+            --text: #ffffff;
+            --text-secondary: #8899cc;
+            --text-muted: #4a5a8a;
+            --blue: #448AFF;
+            --blue-dark: #2b6bc4;
+            --gold: #FFD700;
+            --green: #2ed573;
+            --red: #ff4757;
+            --orange: #ffa502;
+            --purple: #a855f7;
+            --cyan: #22d3ee;
+            --pink: #f472b6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 10px; }
+
+        /* ============================================================
+           HEADER
+           ============================================================ */
+        .header {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .header-left .logo {
+            font-size: 1.6rem;
+        }
+
+        .header-left h1 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .header-left h1 span {
+            color: var(--blue);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-right .uses-badge {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            background: rgba(255,255,255,0.03);
+            padding: 4px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .header-right .uses-badge span {
+            color: var(--gold);
+        }
+
+        .logout-btn {
+            padding: 8px 18px;
+            border: 1px solid rgba(255,50,50,0.08);
+            border-radius: 10px;
+            background: rgba(255,50,50,0.02);
+            color: rgba(255,50,50,0.3);
+            font-size: 0.7rem;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,50,50,0.08);
+            color: var(--red);
+        }
+
+        /* ============================================================
+           CONTAINER
+           ============================================================ */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 24px 40px;
+        }
+
+        /* ============================================================
+           STATS ROW
+           ============================================================ */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 18px 16px;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .stat-card:hover {
+            border-color: var(--border-light);
+        }
+
+        .stat-card .number {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .stat-card .number.blue { color: var(--blue); }
+        .stat-card .number.gold { color: var(--gold); }
+        .stat-card .number.orange { color: var(--orange); }
+        .stat-card .number.green { color: var(--green); }
+
+        .stat-card .label {
+            font-size: 0.55rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+
+        /* ============================================================
+           GRID 3 COLUMNS
+           ============================================================ */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        /* ============================================================
+           FEATURE CARDS
+           ============================================================ */
+        .feature-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px 18px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            display: block;
+        }
+
+        .feature-card:hover {
+            border-color: var(--border-light);
+            background: var(--card-hover);
+            transform: translateY(-3px);
+        }
+
+        .feature-card .icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .feature-card .icon.blue { color: var(--blue); }
+        .feature-card .icon.gold { color: var(--gold); }
+        .feature-card .icon.green { color: var(--green); }
+        .feature-card .icon.orange { color: var(--orange); }
+        .feature-card .icon.red { color: var(--red); }
+        .feature-card .icon.purple { color: var(--purple); }
+        .feature-card .icon.cyan { color: var(--cyan); }
+        .feature-card .icon.pink { color: var(--pink); }
+
+        .feature-card .title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 2px;
+        }
+
+        .feature-card .desc {
+            font-size: 0.55rem;
+            color: var(--text-muted);
+            letter-spacing: 0.3px;
+        }
+
+        /* ============================================================
+           TOAST
+           ============================================================ */
+        #toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 360px;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #ffffff;
+            transform: translateX(120%);
+            opacity: 0;
+            transition: 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+
+        #toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        #toast.success {
+            background: rgba(46,213,115,0.08);
+            border-color: rgba(46,213,115,0.05);
+            color: var(--green);
+        }
+
+        #toast.error {
+            background: rgba(255,71,87,0.08);
+            border-color: rgba(255,71,87,0.05);
+            color: var(--red);
+        }
+
+        #toast.warning {
+            background: rgba(255,165,0,0.08);
+            border-color: rgba(255,165,0,0.05);
+            color: var(--orange);
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 768px) {
+            .grid-3 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .header {
+                padding: 12px 16px;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .header-left h1 {
+                font-size: 0.95rem;
+            }
+
+            .container {
+                padding: 12px 12px 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .grid-3 {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .stats-row {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .stat-card .number {
+                font-size: 1.4rem;
+            }
+
+            .feature-card {
+                padding: 14px 12px;
+            }
+
+            .feature-card .icon {
+                font-size: 1.5rem;
+            }
+
+            .feature-card .title {
+                font-size: 0.65rem;
+            }
+
+            .header-right .uses-badge {
+                font-size: 0.55rem;
+                padding: 2px 10px;
+            }
+
+            .logout-btn {
+                font-size: 0.6rem;
+                padding: 6px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+       HEADER
+       ============================================================ -->
+    <div class="header">
+        <div class="header-left">
+            <span class="logo">🎣</span>
+            <h1>ICE <span>FISHING</span></h1>
+            <span style="font-size:0.6rem; color:var(--text-muted); font-weight:400; margin-left:-4px;">ADMIN</span>
+        </div>
+        <div class="header-right">
+            <span class="uses-badge">Uses: <span id="usesCount">0</span>/10</span>
+            <button class="logout-btn" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </div>
+
+    <!-- ============================================================
+       TOAST
+       ============================================================ -->
+    <div id="toast">
+        <span id="toastMessage">Toast message</span>
+    </div>
+
+    <!-- ============================================================
+       CONTAINER
+       ============================================================ -->
+    <div class="container">
+
+        <!-- ============================================================
+           STATS ROW
+           ============================================================ -->
+        <div class="stats-row" id="statsRow">
+            <div class="stat-card">
+                <div class="number blue" id="totalLicenseKeys">0</div>
+                <div class="label">License Keys</div>
+            </div>
+            <div class="stat-card">
+                <div class="number gold" id="totalUsers">0</div>
+                <div class="label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="number orange" id="pendingCount">0</div>
+                <div class="label">Pending</div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+           FEATURES GRID
+           ============================================================ -->
+        <div class="grid-3">
+
+            <!-- License Keys -->
+            <a href="admin-license-keys.html" class="feature-card">
+                <div class="icon blue">🔑</div>
+                <div class="title">License Keys</div>
+                <div class="desc">Generate & Manage</div>
+            </a>
+
+            <!-- Activation Codes -->
+            <a href="admin-activation-codes.html" class="feature-card">
+                <div class="icon gold">🎯</div>
+                <div class="title">Activation Codes</div>
+                <div class="desc">Signal Access Codes</div>
+            </a>
+
+            <!-- Deposits -->
+            <a href="admin-deposits.html" class="feature-card">
+                <div class="icon green">💰</div>
+                <div class="title">Deposits</div>
+                <div class="desc">Approve & Reject</div>
+            </a>
+
+            <!-- Package Payments -->
+            <a href="admin-package-payments.html" class="feature-card">
+                <div class="icon orange">📦</div>
+                <div class="title">Package Payments</div>
+                <div class="desc">Approve Package</div>
+            </a>
+
+            <!-- Users -->
+            <a href="admin-users.html" class="feature-card">
+                <div class="icon purple">👥</div>
+                <div class="title">Users</div>
+                <div class="desc">Manage & View</div>
+            </a>
+
+            <!-- User Balance -->
+            <a href="admin-user-balance.html" class="feature-card">
+                <div class="icon cyan">💳</div>
+                <div class="title">User Balance</div>
+                <div class="desc">Add/Remove Balance</div>
+            </a>
+
+            <!-- Payment Numbers -->
+            <a href="admin-payment-numbers.html" class="feature-card">
+                <div class="icon pink">📱</div>
+                <div class="title">Payment Numbers</div>
+                <div class="desc">UPI, Bkash, USDT</div>
+            </a>
+
+            <!-- Settings -->
+            <a href="admin-settings.html" class="feature-card">
+                <div class="icon red">⚙️</div>
+                <div class="title">Settings</div>
+                <div class="desc">App & Maintenance</div>
+            </a>
+
+            <!-- Signals (Extra) -->
+            <a href="admin-signals.html" class="feature-card">
+                <div class="icon cyan">📡</div>
+                <div class="title">Live Signals</div>
+                <div class="desc">Send & Manage</div>
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- ============================================================
+       FIREBASE SDK
+       ============================================================ -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js">
+    </script>
+
+    <script>
+        // ============================================================
+        // FIREBASE CONFIG
+        // ============================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDFZpetqOy3nHj27rUo7js6Bny79sxnYvU",
+            authDomain: "ice-fishing-c20bc.firebaseapp.com",
+            projectId: "ice-fishing-c20bc",
+            storageBucket: "ice-fishing-c20bc.firebasestorage.app",
+            messagingSenderId: "220872632937",
+            appId: "1:220872632937:android:71997f3fd7dba6293a90f8"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // ============================================================
+        // CHECK ADMIN AUTH
+        // ============================================================
+        function checkAdminAuth() {
+            const adminKey = sessionStorage.getItem('adminKey');
+            const adminToken = sessionStorage.getItem('adminToken');
+
+            if (!adminKey || !adminToken) {
+                window.location.href = 'index.html';
+                return false;
+            }
+            return true;
+        }
+
+        // ============================================================
+        // LOAD USES COUNT
+        // ============================================================
+        function loadUsesCount() {
+            const adminKey = sessionStorage.getItem('adminKey');
+            if (!adminKey) return;
+
+            db.collection('adminKeys')
+                .where('key', '==', adminKey)
+                .get()
+                .then((snapshot) => {
+                    if (!snapshot.empty) {
+                        const data = snapshot.docs[0].data();
+                        document.getElementById('usesCount').textContent = data.loginCount || 0;
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error loading uses count:', error);
+                });
+        }
+
+        // ============================================================
+        // LOAD STATS
+        // ============================================================
+        function loadStats() {
+            // Total License Keys (userKeys)
+            db.collection('userKeys').get()
+                .then((snapshot) => {
+                    document.getElementById('totalLicenseKeys').textContent = snapshot.size;
+                })
+                .catch((error) => {
+                    console.error('Error loading license keys:', error);
+                });
+
+            // Total Users
+            db.collection('users').get()
+                .then((snapshot) => {
+                    document.getElementById('totalUsers').textContent = snapshot.size;
+                })
+                .catch((error) => {
+                    console.error('Error loading users:', error);
+                });
+
+            // Pending Payments
+            db.collection('paymentRequests')
+                .where('status', '==', 'pending')
+                .get()
+                .then((snapshot) => {
+                    document.getElementById('pendingCount').textContent = snapshot.size;
+                })
+                .catch((error) => {
+                    console.error('Error loading pending:', error);
+                });
+        }
+
+        // ============================================================
+        // LOGOUT
+        // ============================================================
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                sessionStorage.removeItem('adminKey');
+                sessionStorage.removeItem('adminToken');
+                window.location.href = 'index.html';
+            }
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        if (checkAdminAuth()) {
+            loadUsesCount();
+            loadStats();
+
+            // Refresh every 30 seconds
+            setInterval(() => {
+                loadStats();
+                loadUsesCount();
+            }, 30000);
+        }
+    </script>
+
+</body>
+</html>

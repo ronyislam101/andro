@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Package Payments - ICE FISHING Admin</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #080c18;
+            font-family: 'Inter', sans-serif;
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        .bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background:
+                radial-gradient(ellipse at 50% 30%, rgba(0, 120, 255, 0.06) 0%, transparent 55%),
+                radial-gradient(ellipse at 50% 80%, rgba(255, 215, 0, 0.03) 0%, transparent 45%),
+                #080c18;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+        }
+
+        .header .back-btn {
+            padding: 8px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.7rem;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+
+        .header .back-btn:hover {
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .header h1 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            flex: 1;
+            text-align: center;
+        }
+
+        .header h1 span {
+            color: #4dc9f6;
+        }
+
+        .header .placeholder {
+            width: 80px;
+        }
+
+        /* Stats Row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 1.6rem;
+            font-weight: 800;
+        }
+
+        .stat-card .number.blue { color: #4dc9f6; }
+        .stat-card .number.green { color: #00ff88; }
+        .stat-card .number.orange { color: #ffa500; }
+        .stat-card .number.red { color: #ff6b6b; }
+
+        .stat-card .label {
+            font-size: 0.55rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.15);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+
+        /* Filter */
+        .filter-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .filter-row select,
+        .filter-row input {
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 10px;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .filter-row select option {
+            background: #080c18;
+            color: #ffffff;
+        }
+
+        .filter-row select:focus,
+        .filter-row input:focus {
+            border-color: rgba(77, 201, 246, 0.15);
+        }
+
+        .filter-row input {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-row input::placeholder {
+            color: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Table */
+        .table-section {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 20px 22px;
+        }
+
+        .table-section .title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .table-section .title-row .title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.15);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .table-section .title-row .count {
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.1);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+        }
+
+        thead {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        th {
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.02);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        td .user-name {
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        td .amount {
+            color: #ffd700;
+            font-weight: 600;
+        }
+
+        td .package-name {
+            color: #4dc9f6;
+            font-weight: 500;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 0.5rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .status-badge.pending {
+            background: rgba(255, 165, 0, 0.06);
+            color: #ffa500;
+        }
+
+        .status-badge.approved {
+            background: rgba(0, 255, 136, 0.06);
+            color: #00ff88;
+        }
+
+        .status-badge.rejected {
+            background: rgba(255, 50, 50, 0.06);
+            color: #ff6b6b;
+        }
+
+        .action-btn {
+            padding: 4px 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .action-btn.approve-btn {
+            background: rgba(0, 255, 136, 0.06);
+            color: #00ff88;
+        }
+
+        .action-btn.approve-btn:hover {
+            background: rgba(0, 255, 136, 0.12);
+        }
+
+        .action-btn.reject-btn {
+            background: rgba(255, 50, 50, 0.06);
+            color: #ff6b6b;
+        }
+
+        .action-btn.reject-btn:hover {
+            background: rgba(255, 50, 50, 0.12);
+        }
+
+        .action-btn.view-btn {
+            background: rgba(77, 201, 246, 0.06);
+            color: #4dc9f6;
+        }
+
+        .action-btn.view-btn:hover {
+            background: rgba(77, 201, 246, 0.12);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px 20px;
+            color: rgba(255, 255, 255, 0.04);
+        }
+
+        .empty-state i {
+            font-size: 2rem;
+            opacity: 0.2;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: #0e1525;
+            border: 1px solid #1a2540;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 520px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .modal .modal-header h2 {
+            font-size: 1.1rem;
+        }
+
+        .modal .modal-header .close-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .modal .modal-header .close-btn:hover {
+            color: #ffffff;
+        }
+
+        .modal .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            align-items: center;
+        }
+
+        .modal .detail-row .label {
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 0.7rem;
+        }
+
+        .modal .detail-row .value {
+            color: #ffffff;
+            font-weight: 500;
+            font-size: 0.8rem;
+        }
+
+        .modal .detail-row .value.gold {
+            color: #ffd700;
+        }
+
+        .modal .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .modal .modal-actions .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .modal .modal-actions .btn-approve {
+            background: linear-gradient(135deg, #00ff88, #00cc6a);
+            color: #080c18;
+        }
+
+        .modal .modal-actions .btn-approve:hover {
+            transform: translateY(-2px);
+        }
+
+        .modal .modal-actions .btn-reject {
+            background: linear-gradient(135deg, #ff6b6b, #cc4444);
+            color: #ffffff;
+        }
+
+        .modal .modal-actions .btn-reject:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 360px;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transform: translateX(120%);
+            opacity: 0;
+            transition: 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+
+        #toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        #toast.success {
+            background: rgba(0, 255, 136, 0.08);
+            border-color: rgba(0, 255, 136, 0.05);
+            color: #00ff88;
+        }
+
+        #toast.error {
+            background: rgba(255, 50, 50, 0.08);
+            border-color: rgba(255, 50, 50, 0.05);
+            color: #ff6b6b;
+        }
+
+        #toast.warning {
+            background: rgba(255, 165, 0, 0.08);
+            border-color: rgba(255, 165, 0, 0.05);
+            color: #ffa500;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .header {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .header .placeholder {
+                display: none;
+            }
+            table {
+                font-size: 0.65rem;
+            }
+            th, td {
+                padding: 6px 6px;
+            }
+            .filter-row {
+                flex-direction: column;
+            }
+            .filter-row input {
+                min-width: unset;
+            }
+            .modal {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 12px; }
+            .stats-row {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            .stat-card .number {
+                font-size: 1.2rem;
+            }
+            .header h1 {
+                font-size: 1rem;
+            }
+            .table-section {
+                padding: 14px 12px;
+            }
+            .modal {
+                padding: 16px;
+            }
+            .modal .detail-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+            .modal .modal-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg"></div>
+
+    <div id="toast">
+        <span id="toastMessage">Toast message</span>
+    </div>
+
+    <div class="container">
+
+        <!-- Header -->
+        <div class="header">
+            <a href="admin-panel.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
+            <h1>📦 <span>Package</span> Payments</h1>
+            <div class="placeholder"></div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row" id="statsRow">
+            <div class="stat-card">
+                <div class="number blue" id="totalPackages">0</div>
+                <div class="label">Total</div>
+            </div>
+            <div class="stat-card">
+                <div class="number orange" id="pendingPackages">0</div>
+                <div class="label">Pending</div>
+            </div>
+            <div class="stat-card">
+                <div class="number green" id="approvedPackages">0</div>
+                <div class="label">Approved</div>
+            </div>
+            <div class="stat-card">
+                <div class="number red" id="rejectedPackages">0</div>
+                <div class="label">Rejected</div>
+            </div>
+        </div>
+
+        <!-- Filter -->
+        <div class="filter-row">
+            <select id="statusFilter" onchange="applyFilters()">
+                <option value="all">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+            </select>
+            <input type="text" id="searchInput" placeholder="🔍 Search by user or package..." oninput="applyFilters()" />
+        </div>
+
+        <!-- Table -->
+        <div class="table-section">
+            <div class="title-row">
+                <span class="title"><i class="fas fa-list"></i> Package Payment Requests</span>
+                <span class="count" id="packageCount">Total: 0</span>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>User</th>
+                            <th>Package</th>
+                            <th>Amount</th>
+                            <th>Method</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="packageTableBody">
+                        <tr>
+                            <td colspan="8">
+                                <div class="empty-state">
+                                    <i class="fas fa-box"></i>
+                                    No package payment requests found
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>📋 Package Details</h2>
+                <button class="close-btn" onclick="closeModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="modalBody">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js">
+    </script>
+
+    <script>
+        // ============================================================
+        // FIREBASE
+        // ============================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDFZpetqOy3nHj27rUo7js6Bny79sxnYvU",
+            authDomain: "ice-fishing-c20bc.firebaseapp.com",
+            projectId: "ice-fishing-c20bc",
+            storageBucket: "ice-fishing-c20bc.firebasestorage.app",
+            messagingSenderId: "220872632937",
+            appId: "1:220872632937:android:71997f3fd7dba6293a90f8"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        let allPackages = [];
+
+        // ============================================================
+        // CHECK ADMIN AUTH
+        // ============================================================
+        function checkAdminAuth() {
+            const adminKey = sessionStorage.getItem('adminKey');
+            const adminToken = sessionStorage.getItem('adminToken');
+
+            if (!adminKey || !adminToken) {
+                window.location.href = 'admin-login.html';
+                return false;
+            }
+            return true;
+        }
+
+        // ============================================================
+        // TOAST
+        // ============================================================
+        let toastTimer = null;
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+
+            if (toastTimer) clearTimeout(toastTimer);
+
+            toastMessage.textContent = message;
+            toast.className = type;
+            toast.classList.add('show');
+
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3500);
+        }
+
+        // ============================================================
+        // LOAD PACKAGE PAYMENTS
+        // ============================================================
+        function loadPackagePayments() {
+            db.collection('userPackages')
+                .orderBy('createdAt', 'desc')
+                .get()
+                .then((snapshot) => {
+                    allPackages = [];
+                    snapshot.forEach((doc) => {
+                        allPackages.push({ id: doc.id, ...doc.data() });
+                    });
+                    updateStats();
+                    applyFilters();
+                })
+                .catch((error) => {
+                    console.error('Error loading package payments:', error);
+                });
+        }
+
+        // ============================================================
+        // UPDATE STATS
+        // ============================================================
+        function updateStats() {
+            const total = allPackages.length;
+            const pending = allPackages.filter(p => p.status === 'pending').length;
+            const approved = allPackages.filter(p => p.status === 'approved').length;
+            const rejected = allPackages.filter(p => p.status === 'rejected').length;
+
+            document.getElementById('totalPackages').textContent = total;
+            document.getElementById('pendingPackages').textContent = pending;
+            document.getElementById('approvedPackages').textContent = approved;
+            document.getElementById('rejectedPackages').textContent = rejected;
+            document.getElementById('packageCount').textContent = 'Total: ' + total;
+        }
+
+        // ============================================================
+        // APPLY FILTERS
+        // ============================================================
+        function applyFilters() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const search = document.getElementById('searchInput').value.toLowerCase();
+
+            let filtered = allPackages;
+
+            if (statusFilter !== 'all') {
+                filtered = filtered.filter(p => p.status === statusFilter);
+            }
+
+            if (search) {
+                filtered = filtered.filter(p =>
+                    (p.userName || '').toLowerCase().includes(search) ||
+                    (p.packageName || '').toLowerCase().includes(search)
+                );
+            }
+
+            renderTable(filtered);
+        }
+
+        // ============================================================
+        // RENDER TABLE
+        // ============================================================
+        function renderTable(packages) {
+            const tbody = document.getElementById('packageTableBody');
+
+            if (packages.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-state">
+                                <i class="fas fa-box"></i>
+                                No package payment requests found
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            let html = '';
+            let index = 1;
+
+            packages.forEach((p) => {
+                const statusClass = p.status || 'pending';
+                const statusLabel = statusClass.charAt(0).toUpperCase() + statusClass.slice(1);
+                const date = p.createdAt?.toDate?.() || new Date(p.createdAt);
+                const dateStr = date.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                const method = p.paymentMethod || p.method || '—';
+                const amount = p.amount || p.packagePrice || 0;
+
+                html += `
+                    <tr>
+                        <td>${index++}</td>
+                        <td><span class="user-name">${p.userName || 'Unknown'}</span></td>
+                        <td><span class="package-name">${p.packageName || '—'}</span></td>
+                        <td><span class="amount">$${amount}</span></td>
+                        <td>${method}</td>
+                        <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
+                        <td style="font-size:0.6rem; color:rgba(255,255,255,0.1);">${dateStr}</td>
+                        <td>
+                            <button class="action-btn view-btn" onclick="viewPackage('${p.id}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            ${p.status === 'pending' ? `
+                                <button class="action-btn approve-btn" onclick="approvePackage('${p.id}')">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="action-btn reject-btn" onclick="rejectPackage('${p.id}')">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            ` : ''}
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        // ============================================================
+        // VIEW PACKAGE
+        // ============================================================
+        function viewPackage(docId) {
+            const pkg = allPackages.find(p => p.id === docId);
+            if (!pkg) return;
+
+            const modal = document.getElementById('modalOverlay');
+            const body = document.getElementById('modalBody');
+
+            const date = pkg.createdAt?.toDate?.() || new Date(pkg.createdAt);
+            const dateStr = date.toLocaleDateString('en-US', {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            const statusColor = pkg.status === 'approved' ? '#00ff88' :
+                pkg.status === 'rejected' ? '#ff6b6b' : '#ffa500';
+
+            body.innerHTML = `
+                <div class="detail-row">
+                    <span class="label">User</span>
+                    <span class="value">${pkg.userName || 'Unknown'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Email</span>
+                    <span class="value">${pkg.userEmail || '—'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Package</span>
+                    <span class="value" style="color:#4dc9f6;">${pkg.packageName || '—'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Amount</span>
+                    <span class="value gold">$${pkg.amount || pkg.packagePrice || 0}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Currency</span>
+                    <span class="value">${pkg.currency || 'USD'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Payment Method</span>
+                    <span class="value">${pkg.paymentMethod || pkg.method || '—'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Status</span>
+                    <span class="value" style="color:${statusColor}; text-transform:capitalize;">${pkg.status || 'pending'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Date</span>
+                    <span class="value" style="font-size:0.7rem; color:rgba(255,255,255,0.1);">${dateStr}</span>
+                </div>
+                ${pkg.status === 'pending' ? `
+                    <div class="modal-actions">
+                        <button class="btn btn-approve" onclick="approvePackage('${pkg.id}'); closeModal();">
+                            ✅ Approve
+                        </button>
+                        <button class="btn btn-reject" onclick="rejectPackage('${pkg.id}'); closeModal();">
+                            ❌ Reject
+                        </button>
+                    </div>
+                ` : ''}
+            `;
+
+            modal.classList.add('show');
+        }
+
+        // ============================================================
+        // CLOSE MODAL
+        // ============================================================
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('show');
+        }
+
+        // ============================================================
+        // APPROVE PACKAGE
+        // ============================================================
+        async function approvePackage(docId) {
+            if (!confirm('Approve this package payment?')) return;
+
+            try {
+                const docRef = db.collection('userPackages').doc(docId);
+                const doc = await docRef.get();
+                const data = doc.data();
+
+                // Activate the package
+                const durationMap = {
+                    'Starter': 1,
+                    'Pro': 2,
+                    'Ultimate': 4,
+                    'Day Pass': 12,
+                    'Access': 24
+                };
+
+                const hours = durationMap[data.packageName] || 1;
+                const expiryTime = new Date();
+                expiryTime.setHours(expiryTime.getHours() + hours);
+
+                await docRef.update({
+                    status: 'approved',
+                    expiryTime: expiryTime,
+                    approvedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // Update user's package status
+                if (data.userId) {
+                    await db.collection('users').doc(data.userId).update({
+                        packageName: data.packageName,
+                        packageStatus: 'active',
+                        packageExpiry: expiryTime,
+                        signalActive: true
+                    });
+                }
+
+                showToast('✅ Package approved! ' + data.packageName + ' activated for ' + hours + ' hour(s).', 'success');
+                loadPackagePayments();
+            } catch (error) {
+                console.error('Error approving package:', error);
+                showToast('❌ Failed to approve package: ' + error.message, 'error');
+            }
+        }
+
+        // ============================================================
+        // REJECT PACKAGE
+        // ============================================================
+        async function rejectPackage(docId) {
+            if (!confirm('Reject this package payment?')) return;
+
+            try {
+                await db.collection('userPackages').doc(docId).update({
+                    status: 'rejected',
+                    rejectedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                showToast('❌ Package payment rejected', 'warning');
+                loadPackagePayments();
+            } catch (error) {
+                console.error('Error rejecting package:', error);
+                showToast('❌ Failed to reject package: ' + error.message, 'error');
+            }
+        }
+
+        // ============================================================
+        // CLOSE MODAL ON OVERLAY CLICK
+        // ============================================================
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        if (checkAdminAuth()) {
+            loadPackagePayments();
+            setInterval(loadPackagePayments, 30000);
+        }
+    </script>
+
+</body>
+</html>
