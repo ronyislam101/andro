@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ICE FISHING - Admin Panel</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <style>
+        /* ============================================================
+           ROOT VARIABLES
+           ============================================================ */
+        :root {
+            --bg: #080c18;
+            --card: #0e1525;
+            --card-hover: #141d30;
+            --border: #1a2540;
+            --border-light: #243050;
+            --text: #ffffff;
+            --text-secondary: #8899cc;
+            --text-muted: #4a5a8a;
+            --blue: #448AFF;
+            --blue-dark: #2b6bc4;
+            --gold: #FFD700;
+            --green: #2ed573;
+            --red: #ff4757;
+            --orange: #ffa502;
+            --purple: #a855f7;
+            --cyan: #22d3ee;
+            --pink: #f472b6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 10px; }
+
+        /* ============================================================
+           HEADER
+           ============================================================ */
+        .header {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .header-left .logo {
+            font-size: 1.6rem;
+        }
+
+        .header-left h1 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .header-left h1 span {
+            color: var(--blue);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-right .uses-badge {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            background: rgba(255,255,255,0.03);
+            padding: 4px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .header-right .uses-badge span {
+            color: var(--gold);
+        }
+
+        .logout-btn {
+            padding: 8px 18px;
+            border: 1px solid rgba(255,50,50,0.08);
+            border-radius: 10px;
+            background: rgba(255,50,50,0.02);
+            color: rgba(255,50,50,0.3);
+            font-size: 0.7rem;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,50,50,0.08);
+            color: var(--red);
+        }
+
+        /* ============================================================
+           CONTAINER
+           ============================================================ */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 24px 40px;
+        }
+
+        /* ============================================================
+           STATS ROW
+           ============================================================ */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 18px 16px;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .stat-card:hover {
+            border-color: var(--border-light);
+        }
+
+        .stat-card .number {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .stat-card .number.blue { color: var(--blue); }
+        .stat-card .number.gold { color: var(--gold); }
+        .stat-card .number.orange { color: var(--orange); }
+        .stat-card .number.green { color: var(--green); }
+
+        .stat-card .label {
+            font-size: 0.55rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+
+        /* ============================================================
+           GRID 3 COLUMNS
+           ============================================================ */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        /* ============================================================
+           FEATURE CARDS
+           ============================================================ */
+        .feature-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px 18px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            display: block;
+        }
+
+        .feature-card:hover {
+            border-color: var(--border-light);
+            background: var(--card-hover);
+            transform: translateY(-3px);
+        }
+
+        .feature-card .icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .feature-card .icon.blue { color: var(--blue); }
+        .feature-card .icon.gold { color: var(--gold); }
+        .feature-card .icon.green { color: var(--green); }
+        .feature-card .icon.orange { color: var(--orange); }
+        .feature-card .icon.red { color: var(--red); }
+        .feature-card .icon.purple { color: var(--purple); }
+        .feature-card .icon.cyan { color: var(--cyan); }
+        .feature-card .icon.pink { color: var(--pink); }
+
+        .feature-card .title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 2px;
+        }
+
+        .feature-card .desc {
+            font-size: 0.55rem;
+            color: var(--text-muted);
+            letter-spacing: 0.3px;
+        }
+
+        /* ============================================================
+           TOAST
+           ============================================================ */
+        #toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 360px;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #ffffff;
+            transform: translateX(120%);
+            opacity: 0;
+            transition: 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+
+        #toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        #toast.success {
+            background: rgba(46,213,115,0.08);
+            border-color: rgba(46,213,115,0.05);
+            color: var(--green);
+        }
+
+        #toast.error {
+            background: rgba(255,71,87,0.08);
+            border-color: rgba(255,71,87,0.05);
+            color: var(--red);
+        }
+
+        #toast.warning {
+            background: rgba(255,165,0,0.08);
+            border-color: rgba(255,165,0,0.05);
+            color: var(--orange);
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 768px) {
+            .grid-3 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .header {
+                padding: 12px 16px;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .header-left h1 {
+                font-size: 0.95rem;
+            }
+
+            .container {
+                padding: 12px 12px 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .grid-3 {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .stats-row {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .stat-card .number {
+                font-size: 1.4rem;
+            }
+
+            .feature-card {
+                padding: 14px 12px;
+            }
+
+            .feature-card .icon {
+                font-size: 1.5rem;
+            }
+
+            .feature-card .title {
+                font-size: 0.65rem;
+            }
+
+            .header-right .uses-badge {
+                font-size: 0.55rem;
+                padding: 2px 10px;
+            }
+
+            .logout-btn {
+                font-size: 0.6rem;
+                padding: 6px 12px;
+            }
+        }
+    
+.management-toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:14px 0;margin-bottom:6px}.management-btn{border:1px solid #35537b;background:#132339;color:#cee1ff;border-radius:10px;padding:10px 14px;font:600 12px system-ui;cursor:pointer;display:inline-flex;align-items:center;gap:7px}.management-btn.danger{color:#ffb3b3;border-color:#6d3442;background:#301923}.management-btn.good{color:#91edbd;border-color:#285443;background:#132c24}.management-btn:disabled,.action-btn[data-manage]:disabled{opacity:.5;cursor:wait}.management-btn:hover{filter:brightness(1.2)}.action-btn.delete-btn{color:#ff9b9b;background:rgba(255,60,80,.1);border:1px solid rgba(255,100,110,.25)}.action-btn.ban-btn{color:#ffc16e;background:rgba(255,174,60,.1);border:1px solid rgba(255,174,60,.25)}.action-btn.unban-btn{color:#91edbd;background:rgba(80,220,150,.1);border:1px solid rgba(80,220,150,.25)}.status-badge.banned{color:#ffaaaa;background:#ff646420}.management-note{font:11px system-ui;color:#a1b1c8;line-height:1.6}.dashboard-notice{margin:12px 0 20px;color:#99aec8;font-size:12px}.stats-row{grid-template-columns:repeat(auto-fit,minmax(135px,1fr))!important}.stat-card .number{font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+
+    <!-- ============================================================
+       HEADER
+       ============================================================ -->
+    <div class="header">
+        <div class="header-left">
+            <span class="logo">🎣</span>
+            <h1>ICE <span>FISHING</span></h1>
+            <span style="font-size:0.6rem; color:var(--text-muted); font-weight:400; margin-left:-4px;">ADMIN</span>
+        </div>
+        <div class="header-right">
+            <span class="uses-badge">Uses: <span id="usesCount">—</span>/10</span>
+            <button class="logout-btn" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </div>
+
+    <!-- ============================================================
+       TOAST
+       ============================================================ -->
+    <div id="toast">
+        <span id="toastMessage">Toast message</span>
+    </div>
+
+    <!-- ============================================================
+       CONTAINER
+       ============================================================ -->
+    <div class="container">
+
+        <!-- ============================================================
+           STATS ROW
+           ============================================================ -->
+<div class="stats-row" id="statsRow"><div class="stat-card"><div class="number blue" id="totalLicenseKeys">—</div><div class="label">License Keys</div></div><div class="stat-card"><div class="number gold" id="totalUsers">—</div><div class="label">Registered Users</div></div><div class="stat-card"><div class="number cyan" id="totalKeyLogins">—</div><div class="label">Key Logins</div></div><div class="stat-card"><div class="number green" id="totalActivationCodes">—</div><div class="label">Activation Codes</div></div><div class="stat-card"><div class="number orange" id="pendingPackages">—</div><div class="label">Pending Packages</div></div><div class="stat-card"><div class="number green" id="pendingDeposits">—</div><div class="label">Pending Deposits</div></div><div class="stat-card"><div class="number orange" id="pendingCount">—</div><div class="label">Total Pending</div></div></div>
+<div class="dashboard-notice" id="dashboardNotice">Loading live counts...</div>
+        <!-- ============================================================
+           FEATURES GRID
+           ============================================================ -->
+        <div class="grid-3">
+
+            <!-- License Keys -->
+            <a href="admin-license-keys.html" class="feature-card">
+                <div class="icon blue">🔑</div>
+                <div class="title">License Keys</div>
+                <div class="desc">Generate & Manage</div>
+            </a>
+
+            <!-- Activation Codes -->
+            <a href="admin-activation-codes.html" class="feature-card">
+                <div class="icon gold">🎯</div>
+                <div class="title">Activation Codes</div>
+                <div class="desc">Signal Access Codes</div>
+            </a>
+
+            <!-- Deposits -->
+            <a href="admin-deposits.html" class="feature-card">
+                <div class="icon green">💰</div>
+                <div class="title">Deposit Requests</div>
+                <div class="desc">View, Approve & Manage Requests</div>
+            </a>
+
+            <!-- Package Payments -->
+            <a href="admin-package-payments.html" class="feature-card">
+                <div class="icon orange">📦</div>
+                <div class="title">Package Payments</div>
+                <div class="desc">Approve Package</div>
+            </a>
+
+            <!-- Users -->
+            <a href="admin-users.html" class="feature-card">
+                <div class="icon purple">👥</div>
+                <div class="title">Users</div>
+                <div class="desc">Manage & View</div>
+            </a>
+
+            <!-- User Balance -->
+            <a href="admin-user-balance.html" class="feature-card">
+                <div class="icon cyan">💳</div>
+                <div class="title">User Balance</div>
+                <div class="desc">Add/Remove Balance</div>
+            </a>
+
+            <!-- Payment Numbers -->
+            <a href="admin-payment-numbers.html" class="feature-card">
+                <div class="icon pink">📱</div>
+                <div class="title">Payment Numbers</div>
+                <div class="desc">UPI, Bkash, USDT</div>
+            </a>
+
+            <!-- Settings -->
+            <a href="admin-settings.html" class="feature-card">
+                <div class="icon red">⚙️</div>
+                <div class="title">Settings</div>
+                <div class="desc">App & Maintenance</div>
+            </a>
+
+            <!-- Signals (Extra) -->
+            <a href="admin-signals.html" class="feature-card">
+                <div class="icon cyan">📡</div>
+                <div class="title">Live Signals</div>
+                <div class="desc">Send & Manage</div>
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- ============================================================
+       FIREBASE SDK
+       ============================================================ -->
+    <script>
+(function () {
+    const storageKey = 'iceFishingAdminSession';
+    function read(storage, key) {
+        try { return storage.getItem(key); } catch (_) { return null; }
+    }
+    function remove(storage, key) {
+        try { storage.removeItem(key); } catch (_) {}
+    }
+    function valid(record) {
+        return record && typeof record.key === 'string' && record.key.trim() &&
+            typeof record.token === 'string' && record.token.trim();
+    }
+    function parse(raw) {
+        try { const record = JSON.parse(raw); return valid(record) ? record : null; }
+        catch (_) { return null; }
+    }
+    function cleanLegacy() {
+        for (const storage of [localStorage, sessionStorage]) {
+            remove(storage, 'adminKey');
+            remove(storage, 'adminToken');
+        }
+    }
+    function save(key, token) {
+        const record = { key, token };
+        if (!valid(record)) throw new Error('Invalid admin session. Please login again.');
+        localStorage.setItem(storageKey, JSON.stringify(record));
+        cleanLegacy();
+    }
+    function get() { return parse(read(localStorage, storageKey)); }
+    function clear() {
+        for (const storage of [localStorage, sessionStorage]) {
+            remove(storage, storageKey);
+            remove(storage, 'adminKey');
+            remove(storage, 'adminToken');
+        }
+    }
+    // Preserve already signed-in sessions when these updated pages are installed.
+    if (!get()) {
+        const savedLocal = {
+            key: read(localStorage, 'adminKey'),
+            token: read(localStorage, 'adminToken')
+        };
+        const savedTab = {
+            key: read(sessionStorage, 'adminKey'),
+            token: read(sessionStorage, 'adminToken')
+        };
+        const legacy = valid(savedLocal) ? savedLocal : valid(savedTab) ? savedTab : null;
+        if (legacy) {
+            try { save(legacy.key, legacy.token); } catch (_) {}
+        }
+    } else {
+        cleanLegacy();
+    }
+    window.AdminSession = {
+        get,
+        save,
+        clear,
+        getKey: () => { const session = get(); return session ? session.key : null; },
+        getToken: () => { const session = get(); return session ? session.token : null; }
+    };
+})();
+
+window.addEventListener('storage', function (event) {
+    if ((event.key === 'iceFishingAdminSession' || event.key === null) && !AdminSession.get()) {
+        window.location.replace('index.html');
+    }
+});
+</script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js">
+    </script>
+
+    <script>
+        // ============================================================
+        // FIREBASE CONFIG
+        // ============================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDFZpetqOy3nHj27rUo7js6Bny79sxnYvU",
+            authDomain: "ice-fishing-c20bc.firebaseapp.com",
+            projectId: "ice-fishing-c20bc",
+            storageBucket: "ice-fishing-c20bc.firebasestorage.app",
+            messagingSenderId: "220872632937",
+            appId: "1:220872632937:android:71997f3fd7dba6293a90f8",
+            databaseURL: "https://ice-fishing-c20bc-default-rtdb.asia-southeast1.firebasedatabase.app"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // ============================================================
+        // CHECK ADMIN AUTH
+        // ============================================================
+        function checkAdminAuth() {
+            const adminKey = AdminSession.getKey();
+            const adminToken = AdminSession.getToken();
+
+            if (!adminKey || !adminToken) {
+                window.location.href = 'index.html';
+                return false;
+            }
+            return true;
+        }
+
+        // ============================================================
+        // LOAD USES COUNT
+        // ============================================================
+        const realtime = firebase.database();
+        const dashboardSubscriptions = [];
+        const metricErrors = new Set();
+        const dashboardData = { firestoreUsers: null, realtimeUsers: null, devices: null, packages: null, deposits: null };
+        function metric(id, value) { document.getElementById(id).textContent = Number(value).toLocaleString(); }
+        function dashboardError(source, ids) {
+            return error => {
+                if (source === 'registered users') dashboardData.realtimeUsers = null;
+                if (source === 'device users') dashboardData.devices = null;
+                if (source === 'user profiles') dashboardData.firestoreUsers = null;
+                metricErrors.add(source);
+                ids.forEach(id => { document.getElementById(id).textContent = '—'; });
+                document.getElementById('dashboardNotice').textContent = 'Could not load: ' + [...metricErrors].join(', ') + '. Check database access.';
+                console.error('Dashboard data error:', source, error);
+            };
+        }
+        function dashboardLoaded(source) {
+            metricErrors.delete(source);
+            document.getElementById('dashboardNotice').textContent = metricErrors.size ? 'Could not load: ' + [...metricErrors].join(', ') : 'Live counts from your saved records';
+        }
+        function renderUserCount() {
+            const state = dashboardData;
+            if (state.firestoreUsers === null || state.realtimeUsers === null || state.devices === null) return;
+            const uids = new Set(state.firestoreUsers);
+            Object.entries(state.realtimeUsers).forEach(([id, data]) => { if (data && typeof data === 'object') uids.add(data.uid || id); });
+            Object.values(state.devices).forEach(data => { if (data && data.authUid) uids.add(data.authUid); });
+            metric('totalUsers', uids.size);
+        }
+        function renderPendingTotal() {
+            if (dashboardData.packages !== null && dashboardData.deposits !== null) metric('pendingCount', dashboardData.packages + dashboardData.deposits);
+        }
+        function loadUsesCount() {
+            const key = AdminSession.getKey();
+            if (!key) return;
+            const ref = realtime.ref('ICE FISHING/adminKeys').orderByChild('key').equalTo(key);
+            const listener = ref.on('value', snapshot => {
+                let count = 0;
+                snapshot.forEach(child => { count = Number(child.val().loginCount) || 0; });
+                metric('usesCount', count);
+                dashboardLoaded('admin key usage');
+            }, dashboardError('admin key usage', ['usesCount']));
+            dashboardSubscriptions.push(() => ref.off('value', listener));
+        }
+        function loadStats() {
+            const watchRealtime = (path, callback, source, ids) => {
+                const ref = realtime.ref(path);
+                const listener = ref.on('value', snapshot => { callback(snapshot.val() || {}); dashboardLoaded(source); }, dashboardError(source, ids));
+                dashboardSubscriptions.push(() => ref.off('value', listener));
+            };
+            watchRealtime('userKeys', data => {
+                const keys = Object.values(data).filter(record => record && typeof record === 'object');
+                metric('totalLicenseKeys', keys.length);
+                metric('totalKeyLogins', keys.reduce((sum, record) => sum + (Number(record.loginCount) || 0), 0));
+            }, 'license keys', ['totalLicenseKeys', 'totalKeyLogins']);
+            watchRealtime('users', data => { dashboardData.realtimeUsers = data; renderUserCount(); }, 'registered users', ['totalUsers']);
+            watchRealtime('deviceSessions', data => { dashboardData.devices = data; renderUserCount(); }, 'device users', ['totalUsers']);
+            dashboardSubscriptions.push(db.collection('users').onSnapshot(snapshot => {
+                dashboardData.firestoreUsers = snapshot.docs.map(doc => doc.data().uid || doc.id);
+                renderUserCount(); dashboardLoaded('user profiles');
+            }, dashboardError('user profiles', ['totalUsers'])));
+            for (const [collection, field, id, label] of [
+                ['paymentRequests', 'packages', 'pendingPackages', 'package requests'],
+                ['depositRequests', 'deposits', 'pendingDeposits', 'deposit requests']
+            ]) {
+                dashboardSubscriptions.push(db.collection(collection).onSnapshot(snapshot => {
+                    const count = snapshot.docs.filter(doc => String(doc.data().status || 'pending').trim().toLowerCase() === 'pending').length;
+                    dashboardData[field] = count;
+                    metric(id, count); renderPendingTotal(); dashboardLoaded(label);
+                }, error => {
+                    dashboardData[field] = null;
+                    dashboardError(label, [id, 'pendingCount'])(error);
+                }));
+            }
+            dashboardSubscriptions.push(db.collection('activationCodes').onSnapshot(snapshot => {
+                metric('totalActivationCodes', snapshot.size); dashboardLoaded('activation codes');
+            }, dashboardError('activation codes', ['totalActivationCodes'])));
+        }
+        window.addEventListener('pagehide', () => {
+            dashboardSubscriptions.forEach(unsubscribe => unsubscribe());
+            dashboardSubscriptions.length = 0;
+        });
+        window.addEventListener('pageshow', event => {
+            if (event.persisted && checkAdminAuth()) { loadUsesCount(); loadStats(); }
+        });
+
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                AdminSession.clear();
+                window.location.href = 'index.html';
+            }
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        if (checkAdminAuth()) {
+            loadUsesCount();
+            loadStats();
+
+
+        }
+    </script>
+
+</body>
+</html>
